@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Http
+
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
@@ -8,13 +10,15 @@
     <environment include="Development">
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
         <link rel="stylesheet" href="~/css/site.css" />
+
         @RenderSection("Styles", required: false)
     </environment>
     <environment exclude="Development">
         <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/css/bootstrap.min.css"
               asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-              asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
+        asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
         <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
+
     </environment>
 </head>
 <body>
@@ -30,12 +34,23 @@
                 <li class="nav-item active">
                     <a class="nav-link" href="/Channels">Channels <span class="sr-only"></span></a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/Users/Login">Login</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/Users/Register">Register</a>
-                </li>
+                @if (Context.Session.GetString("LoggedIn") == null)
+                {
+                    <li class="nav-item">
+                        <a class="nav-link" href="/Users/Login">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/Users/Register">Register</a>
+                    </li>
+                    
+                }    
+                @if (Context.Session.GetString("LoggedIn") != null)
+                {
+                    <li class="nav-item">
+                        <a class="nav-link" href="/Users/Logout">Log out</a>
+                    </li>
+                    
+                }
             </ul>
         </div>
     </nav>

@@ -9,5 +9,8 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "dependencies": {}
+  "dependencies": {
+    "@types/jquery": "^3.3.22",
+    "@types/webix": "^5.1.1"
+  }
 }
