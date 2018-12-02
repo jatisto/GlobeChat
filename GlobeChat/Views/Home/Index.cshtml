@@ -1,0 +1,18 @@
+﻿@using Microsoft.AspNetCore.Http
+
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+Welcome to globchat
+
+
+@if (@Context.Session.Keys.Count() > 0)
+{
+    <p>Test</p>
+}
+@foreach (var s in @Context.Session.Keys)
+{
+    <p> @s.FirstOrDefault().ToString() </p>
+}

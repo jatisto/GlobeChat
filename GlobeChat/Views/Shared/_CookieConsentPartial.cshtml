@@ -1,0 +1,38 @@
+﻿@using Microsoft.AspNetCore.Http.Features
+
+@{
+    var consentFeature = Context.Features.Get<ITrackingConsentFeature>();
+    var showBanner = !consentFeature?.CanTrack ?? false;
+    var cookieString = consentFeature?.CreateConsentCookie();
+}
+
+@if (showBanner)
+{
+    <nav id="cookieConsent" class="navbar-expand navbar-light alert-primary" role="alert">
+        <div class="container p-xl-2">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggler" data-toggle="navbart" data-target="#cookieConsent .navbar-collapse">
+                    <span class="sr-only">Toggle cookie consent banner</span>
+                </button>                
+            </div>
+            <div class="collapse navbar-collapse container row">
+                
+                <span class="navbar-text col-6">
+                    Use this space to summarize your privacy and cookie use policy.
+                </span>
+                <span class="col-6">
+                    <a asp-controller="Home" asp-action="/Privacy" class="btn btn-info navbar-btn">Learn More</a>
+                    <button type="button" id="cookieConsent" class="btn btn-default navbar-btn" data-cookie-string="@cookieString">Accept</button>
+                </span>
+            </div>
+        </div>
+    </nav>
+    <script>
+        (function () {
+            document.querySelector("#cookieConsent button[data-cookie-string]").addEventListener("click", function (el) {
+                document.cookie = el.target.dataset.cookieString;
+                $("#cookieConsent").fadeOut();                
+            }, false);
+        })();
+    </script>
+}
