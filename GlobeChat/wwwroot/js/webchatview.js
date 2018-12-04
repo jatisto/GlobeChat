@@ -1,5 +1,6 @@
-var ChatView = /** @class */ (function () {
-    function ChatView(div_container) {
+"use strict";
+class ChatView {
+    constructor(div_container) {
         this.selectedChannel = 0;
         this.selectedChannel = 0;
         this.channelList = webix.ajax().get("/api/channels");
@@ -43,7 +44,7 @@ var ChatView = /** @class */ (function () {
                                     view: "list",
                                     select: 1,
                                     data: this.channelList,
-                                    template: '<div class ="channel-item" id=#id#> <span class="badge">#channelName# </span><span class="badge #csSclass#"> #userCount# users </span> </div>'
+                                    template: '<div class ="channel-item" id=#id#> <span class="badge">#channelName# </span><span class="badge #csSclass#"> #userCount# users </span> </div>',
                                 }
                             ]
                         },
@@ -78,14 +79,13 @@ var ChatView = /** @class */ (function () {
         this.webixchannelList = $$("webix-channel-list");
         this.webixfeed = $$("webix-feed-list");
     }
-    ChatView.prototype.joinChannel = function () {
-        var joinPromise = webix.ajax().get("api/channels/" + cv.selectedChannel + "/join").then(function () {
+    joinChannel() {
+        var joinPromise = webix.ajax().get("api/channels/" + cv.selectedChannel + "/join").then(() => {
             $$("webix-user-list").clearAll();
             $$("webix-user-list").load("api/channels/" + cv.selectedChannel + "/users");
         });
-    };
-    return ChatView;
-}());
+    }
+}
 var cv = new ChatView("webchatview");
 $(document).on('click', '.channel-item', function () {
     cv.selectedChannel = $(this).attr("id");
@@ -98,7 +98,7 @@ webix.event($$("user-message").$view, "keyup", function (ev) {
     switch (ev.key) {
         case "Enter": {
             usermessage.refresh();
-            setTimeout(function () { }, 1);
+            setTimeout(() => { }, 1);
             usermessage.setValue('');
             break;
         }

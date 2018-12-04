@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using GlobeChat.Models;
 using Microsoft.Extensions.FileProviders;
 using System.IO;
+using GlobChat.api;
 //using SignalRChat.Hubs;
 
 namespace GlobeChat
@@ -48,6 +49,7 @@ namespace GlobeChat
                     .UseSqlServer(Configuration.GetConnectionString("GlobChatContext"))
                     .UseLazyLoadingProxies());
             services.AddSignalR();
+            services.AddScoped<ChannelsControllerAPI>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -71,7 +73,7 @@ namespace GlobeChat
             app.UseStaticFiles();
             app.UseSignalR(routes =>
             {
-                //routes.MapHub<GlobChatHub>("/hub");
+                routes.MapHub<SignalRWebPack.Hubs.ChatHub>("/hub");
             });
 
             app.UseMvc(routes =>

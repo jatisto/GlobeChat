@@ -9,7 +9,9 @@ using GlobeChat.Models;
 using Newtonsoft.Json;
 using System.Collections.Specialized;
 using System.Diagnostics;
+using SignalRWebPack.Hubs;
 using GlobeChat;
+using Microsoft.AspNetCore.SignalR;
 
 namespace GlobChat.api
 {
@@ -30,9 +32,13 @@ namespace GlobChat.api
     public class ChannelsControllerAPI : ControllerBase
     {
         private readonly GlobeChatContext _context;
-        public ChannelsControllerAPI(GlobeChatContext context)
+        private readonly IHubContext<ChatHub> _chatHubContext;
+
+
+        public ChannelsControllerAPI(GlobeChatContext context, IHubContext<ChatHub> hubContext)
         {
             _context = context;
+            _chatHubContext = hubContext;
         }
 
         [Route("{id}/join")]
@@ -42,8 +48,10 @@ namespace GlobChat.api
             var channel = _context.Channels.Where(c => c.Id == Id).Single();
             var user = _context.User.FirstOrDefault(u => u.Login == HttpContext.Session.GetString("LoggedIn_Login"));
 
-            channel.Users.Add(user);
+            
+            channel.Users.Add(user);            
             Helpers.AddLogMessage(_context, user.Login);
+            await _chatHubContext.Clients.All.SendAsync("userLeftChannelNotification", "heLeft");
             await _context.SaveChangesAsync();
         }
 
