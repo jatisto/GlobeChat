@@ -7,7 +7,6 @@ namespace GlobeChat.Models
 {
     public class DbLog
     {
-
         public int Id { get; set; }
         public string Message { get; set; }
     }

@@ -62,9 +62,8 @@ namespace GlobeChat.Models
         [ScaffoldColumn(false)]
         public string EmailConf { get; set; }
 
-        public virtual ICollection<Channel> Channels { get; set; }
-
-
+        public virtual Channel Channel { get; set; }
+        public virtual Connection ConnectionId { get; set; }
         public dynamic Few()
         {
             return new

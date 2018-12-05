@@ -1,14 +1,16 @@
 ﻿using GlobeChat.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
+using System.Linq;
 using System.Net;
 using System.Net.Mail;
+using System.Threading.Tasks;
 
 namespace GlobeChat
 {
     public static class Helpers
-    {
-
-        internal static void AddLogMessage(dynamic _context, string Message)
+    { 
+        internal static void AddLogMessage(GlobeChatContext _context, string Message)
         {
             var dblog = new DbLog();
             dblog.Message = Message;
@@ -16,6 +18,15 @@ namespace GlobeChat
             _context.SaveChanges();
         }
 
+        internal static async Task AddLogMessageAsync(GlobeChatContext _context, string Message)
+        {
+            var dblog = new DbLog();
+            dblog.Message = Message;
+            _context.DbLog.Add(dblog);
+            await _context.SaveChangesAsync();
+        }
+
+     
         internal static string GenerateRandomString(int length)
         {
             Random R = new Random();
@@ -26,6 +37,7 @@ namespace GlobeChat
                 text += possible[R.Next(len)];
             return text;
         }
+
 
         internal static string GenerateSessionId()
         {

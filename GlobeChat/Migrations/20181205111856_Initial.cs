@@ -9,6 +9,20 @@ namespace GlobeChat.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "Channels",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    ChannelName = table.Column<string>(nullable: true),
+                    OwnerId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Channels", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "DbLog",
                 columns: table => new
                 {
@@ -36,11 +50,24 @@ namespace GlobeChat.Migrations
                     Crypto = table.Column<string>(nullable: true),
                     IsGuest = table.Column<bool>(nullable: false),
                     EmailConfirmed = table.Column<bool>(nullable: false),
-                    ChannelId = table.Column<int>(nullable: true)
+                    ChannelId = table.Column<int>(nullable: true),
+                    ChannelId1 = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_User", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_User_Channels_ChannelId",
+                        column: x => x.ChannelId,
+                        principalTable: "Channels",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_User_Channels_ChannelId1",
+                        column: x => x.ChannelId1,
+                        principalTable: "Channels",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -64,24 +91,22 @@ namespace GlobeChat.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Channels",
+                name: "Connections",
                 columns: table => new
                 {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    ChannelName = table.Column<string>(nullable: true),
-                    OwnerId = table.Column<int>(nullable: false),
-                    UserId = table.Column<int>(nullable: true)
+                    id = table.Column<int>(nullable: false),
+                    connectionId = table.Column<string>(nullable: false),
+                    lastSeen = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Channels", x => x.Id);
+                    table.PrimaryKey("PK_Connections", x => x.connectionId);
                     table.ForeignKey(
-                        name: "FK_Channels_User_UserId",
-                        column: x => x.UserId,
+                        name: "FK_Connections_User_id",
+                        column: x => x.id,
                         principalTable: "User",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -90,32 +115,29 @@ namespace GlobeChat.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Channels_UserId",
-                table: "Channels",
-                column: "UserId");
+                name: "IX_Connections_id",
+                table: "Connections",
+                column: "id",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_User_ChannelId",
                 table: "User",
                 column: "ChannelId");
 
-            migrationBuilder.AddForeignKey(
-                name: "FK_User_Channels_ChannelId",
+            migrationBuilder.CreateIndex(
+                name: "IX_User_ChannelId1",
                 table: "User",
-                column: "ChannelId",
-                principalTable: "Channels",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Restrict);
+                column: "ChannelId1");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_Channels_User_UserId",
-                table: "Channels");
-
             migrationBuilder.DropTable(
                 name: "ActivationCodes");
+
+            migrationBuilder.DropTable(
+                name: "Connections");
 
             migrationBuilder.DropTable(
                 name: "DbLog");

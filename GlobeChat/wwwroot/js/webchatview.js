@@ -5,7 +5,6 @@ class ChatView {
         this.selectedChannel = 0;
         this.channelList = webix.ajax().get("/api/channels");
         this.userList = null;
-        console.log(this.channelList);
         this.UI = webix.ui({
             id: "webchatview",
             container: div_container,
@@ -27,7 +26,6 @@ class ChatView {
                                             id: "create-button",
                                             type: "iconTop",
                                             icon: "fa fa-plus",
-                                            click: console.log("wtf2"),
                                             label: "Create"
                                         }, {
                                             view: "button",
@@ -84,6 +82,19 @@ class ChatView {
             $$("webix-user-list").clearAll();
             $$("webix-user-list").load("api/channels/" + cv.selectedChannel + "/users");
         });
+    }
+    loadList() {
+    }
+    addNewUser(login, age, gender) {
+        this.webixuserlist.add({
+            id: login,
+            login: login,
+            age: age,
+            gender: gender
+        });
+    }
+    removeUser(login) {
+        this.webixuserlist.remove(login);
     }
 }
 var cv = new ChatView("webchatview");

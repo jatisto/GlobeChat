@@ -9,7 +9,7 @@ namespace GlobeChat.Models
     {
         public int id { get; set; }
         public string connectionId { get; set; }
-        public User User { get; set; } 
+        virtual public User User { get; set; } 
         public DateTime lastSeen { get; set; }
     }
 }

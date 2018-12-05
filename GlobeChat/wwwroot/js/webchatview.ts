@@ -3,8 +3,7 @@
     constructor(div_container: string) {
         this.selectedChannel = 0;
         this.channelList = webix.ajax().get("/api/channels");
-        this.userList = null;
-        console.log(this.channelList);
+        this.userList = null;        
 
         this.UI = webix.ui({
             id: "webchatview",
@@ -26,8 +25,7 @@
                             view: "button",
                             id: "create-button",
                             type: "iconTop",
-                            icon: "fa fa-plus",
-                            click: console.log("wtf2"),
+                            icon: "fa fa-plus",                            
                             label: "Create"
 
                         }, {
@@ -87,15 +85,28 @@
             (<webix.ui.list>$$("webix-user-list")).clearAll();
             (<webix.ui.list>$$("webix-user-list")).load("api/channels/" + cv.selectedChannel + "/users");
         });
-
-
     }
 
     UI: webix.ui.baseview;
-    webixuserlist: webix.ui.list;
-    webixchannelList: webix.ui.list;
-    webixfeed: webix.ui.list;
+    private webixuserlist: webix.ui.list;
+    private webixchannelList: webix.ui.list;
+    private webixfeed: webix.ui.list;
+    private loadList() :void {
 
+    }
+
+    addNewUser(login: string, age: number, gender: string): void {
+        this.webixuserlist.add({  
+                id:login,
+                login:login,
+                age: age,
+                gender: gender
+            })       
+    }
+
+    removeUser(login: string): void {
+        this.webixuserlist.remove(login);
+    }
     channelList: any;
     userList: any;
     selectedChannel: any = 0;

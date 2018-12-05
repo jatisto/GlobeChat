@@ -34,7 +34,6 @@ namespace GlobChat.api
         private readonly GlobeChatContext _context;
         private readonly IHubContext<ChatHub> _chatHubContext;
 
-
         public ChannelsControllerAPI(GlobeChatContext context, IHubContext<ChatHub> hubContext)
         {
             _context = context;
@@ -45,13 +44,16 @@ namespace GlobChat.api
         [HttpGet]
         public async Task JoinChannelAsync([FromRoute] int Id, string Login)
         {
-            var channel = _context.Channels.Where(c => c.Id == Id).Single();
-            var user = _context.User.FirstOrDefault(u => u.Login == HttpContext.Session.GetString("LoggedIn_Login"));
-
-            
-            channel.Users.Add(user);            
-            Helpers.AddLogMessage(_context, user.Login);
-            await _chatHubContext.Clients.All.SendAsync("userLeftChannelNotification", "heLeft");
+            var newChannel = _context.Channels.Where(c => c.Id == Id).Single();
+            var user = _context.User.FirstOrDefault(u => u.Login == HttpContext.User.Identity.Name);
+            string currentChannelName = "";
+            if (user.Channel != null) currentChannelName = user.Channel.ChannelName;
+            await _chatHubContext.Groups.RemoveFromGroupAsync(user.ConnectionId.connectionId, user.Channel.ChannelName);
+            await _chatHubContext.Clients.Group(user.Channel.ChannelName).SendAsync("userLefChannel",  user.Login, user.Channel.ChannelName);            
+            user.Channel = newChannel;
+            newChannel.Users.Add(user);            
+            await _chatHubContext.Groups.AddToGroupAsync(user.ConnectionId.connectionId, newChannel.ChannelName);
+            await _chatHubContext.Clients.Group(user.Channel.ChannelName).SendAsync("userJoinedChannel", user.Login, user.Channel.ChannelName);
             await _context.SaveChangesAsync();
         }
 
@@ -69,7 +71,6 @@ namespace GlobChat.api
                       };
             return await Few.OrderByDescending(c => c.UserCount).ToListAsync();
         }
-
         [HttpGet]
         [Route("{id}/feed")]
         public void GetFeed()
@@ -110,7 +111,6 @@ namespace GlobChat.api
                 u.EmailConfirmed = true;
                 u.DateOfBirth = DateTime.Now;
                 u.Gender = "Male";
-
                 _context.User.Add(u);
                 _context.SaveChanges();
             }

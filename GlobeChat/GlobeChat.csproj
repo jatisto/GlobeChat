@@ -31,4 +31,10 @@
     <TypeScriptCompile Include="wwwroot\js\webchatview.ts" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="Views\Shared\_UserInfoDebug.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+  </ItemGroup>
+
 </Project>

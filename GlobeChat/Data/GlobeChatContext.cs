@@ -13,11 +13,21 @@ namespace GlobeChat.Models
             modelBuilder.Entity<User>()
                 .HasKey(u => u.Id);
             modelBuilder.Entity<User>()
-               .HasMany(u => u.Channels);
+               .HasOne(u => u.Channel);
             modelBuilder.Entity<Channel>()
                 .HasKey(c => c.Id);
             modelBuilder.Entity<Channel>()
                 .HasMany(u => u.Users);
+
+            modelBuilder.Entity<Connection>()
+                .HasKey(c => c.connectionId);
+            modelBuilder.Entity<Connection>()
+                .HasOne(u => u.User);
+
+            modelBuilder.Entity<User>()
+               .HasKey(c => c.Id);
+            modelBuilder.Entity<User>()
+                .HasOne(u => u.ConnectionId);
         }
         public GlobeChatContext(DbContextOptions<GlobeChatContext> options)
             : base(options)
@@ -27,6 +37,7 @@ namespace GlobeChat.Models
         public DbSet<GlobeChat.Models.DbLog> DbLog { get; set; }
         public DbSet<GlobeChat.Models.ActivationCode> ActivationCodes { get; set; }
         public DbSet<GlobeChat.Models.Channel> Channels { get; set; }
+        public DbSet<GlobeChat.Models.Connection> Connections { get; set; }
 
 
     }

@@ -1,22 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using GlobeChat.Models;
-using System.Diagnostics;
-using Newtonsoft.Json;
-using Microsoft.AspNetCore.Http;
+﻿using GlobeChat.Models;
 using GlobeChat;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace GlobChat.Controllers
 {
     public class UsersController : Controller
     {
         private readonly GlobeChatContext _context;
-
         public UsersController(GlobeChatContext context)
         {
             _context = context;
@@ -36,10 +36,10 @@ namespace GlobChat.Controllers
             return View();
         }
 
-        
+
         public IActionResult Logout()
         {
-            HttpContext.Session.Remove("LoggedIn");
+            HttpContext.SignOutAsync();
             return Redirect(Url.Content("~/"));
 
         }
@@ -48,14 +48,24 @@ namespace GlobChat.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login([Bind("Login,Password")] User user)
         {
-            Helpers.AddLogMessage(_context, "Loggingin");
+           
             var dbUser = await _context.User.FirstOrDefaultAsync(u => u.Login == user.Login);
             ModelState.AddModelError("Login", "Login or password incorrect.");
             if (dbUser == null) return View();
             if (dbUser.Password == user.Password)
             {
                 HttpContext.Session.SetString("LoggedIn", "True");
+                var claims = new List<Claim>();
+                claims.Add(new Claim(ClaimTypes.Name, user.Login));
+                claims.Add(new Claim(ClaimTypes.Role, "ChatUser"));
+                var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                var principal = new ClaimsPrincipal(identity);
+                var props = new AuthenticationProperties();
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, props);
+                await Helpers.AddLogMessageAsync(_context, $"authenticating user + {user.Login}");                
                 HttpContext.Session.SetString("LoggedIn_Login", user.Login);
+                await Helpers.AddLogMessageAsync(_context, $"user authenticated + {user.Login}");
+                await Helpers.AddLogMessageAsync(_context, $"user status + {HttpContext.User.Identity.IsAuthenticated}");
                 return Redirect(Url.Content("~/"));
             }
             else

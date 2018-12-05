@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GlobeChat.Migrations
 {
     [DbContext(typeof(GlobeChatContext))]
-    [Migration("20181202002313_GlobeChat")]
-    partial class GlobeChat
+    [Migration("20181205111856_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -49,13 +49,26 @@ namespace GlobeChat.Migrations
 
                     b.Property<int>("OwnerId");
 
-                    b.Property<int?>("UserId");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
-
                     b.ToTable("Channels");
+                });
+
+            modelBuilder.Entity("GlobeChat.Models.Connection", b =>
+                {
+                    b.Property<string>("connectionId")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("id");
+
+                    b.Property<DateTime>("lastSeen");
+
+                    b.HasKey("connectionId");
+
+                    b.HasIndex("id")
+                        .IsUnique();
+
+                    b.ToTable("Connections");
                 });
 
             modelBuilder.Entity("GlobeChat.Models.DbLog", b =>
@@ -78,6 +91,8 @@ namespace GlobeChat.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<int?>("ChannelId");
+
+                    b.Property<int?>("ChannelId1");
 
                     b.Property<string>("Crypto");
 
@@ -105,6 +120,8 @@ namespace GlobeChat.Migrations
 
                     b.HasIndex("ChannelId");
 
+                    b.HasIndex("ChannelId1");
+
                     b.ToTable("User");
                 });
 
@@ -115,18 +132,23 @@ namespace GlobeChat.Migrations
                         .HasForeignKey("UserId");
                 });
 
-            modelBuilder.Entity("GlobeChat.Models.Channel", b =>
+            modelBuilder.Entity("GlobeChat.Models.Connection", b =>
                 {
-                    b.HasOne("GlobeChat.Models.User")
-                        .WithMany("Channels")
-                        .HasForeignKey("UserId");
+                    b.HasOne("GlobeChat.Models.User", "User")
+                        .WithOne("ConnectionId")
+                        .HasForeignKey("GlobeChat.Models.Connection", "id")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("GlobeChat.Models.User", b =>
                 {
+                    b.HasOne("GlobeChat.Models.Channel", "Channel")
+                        .WithMany()
+                        .HasForeignKey("ChannelId");
+
                     b.HasOne("GlobeChat.Models.Channel")
                         .WithMany("Users")
-                        .HasForeignKey("ChannelId");
+                        .HasForeignKey("ChannelId1");
                 });
 #pragma warning restore 612, 618
         }

@@ -15,7 +15,6 @@ namespace GlobeChat.Models
         public int OwnerId { get; set; }
         public virtual ICollection<User> Users { get; set; }
 
-
     }
 
 }
