@@ -1,0 +1,10 @@
+"use strict";
+const USER_LEFT_CHANNEL = "userLeftChannel";
+const USER_JOINED_CHANNEL = "userJoinedChannel";
+const USER_CONNECTION_TIMEOUT = "userConnectionTimeOut";
+const USER_DISCONNECTED = "userDisconnected";
+const CHANNEL_MESSAGE_RECEIVED = "channelMessageReceived";
+const NEW_MESSAGE = "newMessage";
+const MALE = "Male";
+const FEMAILE = "Female";
+const GLOBAL_CHANNEL = 1;

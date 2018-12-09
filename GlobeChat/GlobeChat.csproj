@@ -22,16 +22,35 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Remove="wwwroot\GUIChannelListElement.ts" />
+    <Content Remove="wwwroot\js\Channel.ts" />
     <Content Remove="wwwroot\js\chat.ts" />
-    <Content Remove="wwwroot\js\webchatview.ts" />
+    <Content Remove="wwwroot\js\globals.ts" />
+    <Content Remove="wwwroot\js\GUIChannelListElement.ts" />
+    <Content Remove="wwwroot\js\GUIChatFeedElement.ts" />
+    <Content Remove="wwwroot\js\GUIElement.ts" />
+    <Content Remove="wwwroot\js\GUIRenderable.ts" />
+    <Content Remove="wwwroot\js\helpers.ts" />
+    <Content Remove="wwwroot\js\User.ts" />
   </ItemGroup>
 
   <ItemGroup>
+    <TypeScriptCompile Include="wwwroot\js\GUIChatFeedElement.ts" />
+    <TypeScriptCompile Include="wwwroot\js\User.ts" />
+    <TypeScriptCompile Include="wwwroot\js\GUIChannelListElement.ts" />
+    <TypeScriptCompile Include="wwwroot\js\GUIUserListElement.ts" />
+    <TypeScriptCompile Include="wwwroot\js\GUIRenderable.ts" />
+    <TypeScriptCompile Include="wwwroot\js\GUIElement.ts" />
+    <TypeScriptCompile Include="wwwroot\js\helpers.ts" />
+    <TypeScriptCompile Include="wwwroot\js\Channel.ts" />
     <TypeScriptCompile Include="wwwroot\js\chat.ts" />
-    <TypeScriptCompile Include="wwwroot\js\webchatview.ts" />
+    <TypeScriptCompile Include="wwwroot\js\globals.ts" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Update="Views\Channels\Index_bckp.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\Shared\_UserInfoDebug.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>

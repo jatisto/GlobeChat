@@ -3,26 +3,105 @@
 @{
     ViewData["Title"] = "Channels";
 }
+<div class="container-fluid h-100" id="main-container">
+    <div class="row justify-content-center h-100">
+        <div class="col-3">
+            <div class="card-header">
+                <div class="input-group">
+                    <input type="text" placeholder="Search..." name="" class="form-control search">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text search_btn"><i class="fas fa-search"></i></span>
+                    </div>
+                </div>
+            </div>
+            <ul class="list-group channel-list">
+               
+            </ul>
+        </div>
 
+        <div class="col-6">
+            <div class="card-header">
+                Message History
+            </div>
+            <div class="feed-container">
+                <ul class="list-group feed-list">
+                   
+                </ul>
+            </div>
+            <ul class="nav nav-tabs">
+                <li class="nav-item">
+                    <a class="nav-link active" href="#">Active</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Link</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Link</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link disabled" href="#">Disabled</a>
+                </li>
+            </ul>
 
-<div class="container-fluid" id="webchatview">
+            <div class="input-group card-footer">
+                <div class="input-group-append">
+                    <span class="input-group-text attach_btn"><i class="fas fa-paperclip"></i></span>
+                </div>
+                <textarea name="" class="form-control message" placeholder="Type your message..."></textarea>
+                <div class="input-group-append">
+                    <span class="input-group-text send_btn"><i class="fas fa-location-arrow"></i></span>
+                </div>
+            </div>
+        </div>
 
+        <div class="col-3">
+            <div class="card-header">
+                Users in this channel
+            </div>
+            <div class="user-container">
+                <ul class="list-group user-list">
+                   
+                </ul>
+            </div>
+            <div class="card-footer rounded">
+
+            </div>
+
+        </div>
+    </div>
 </div>
 
 @section Styles
     {
-    <link rel="stylesheet" href="~/lib//webix/skins/flat.min.css" />
     <link rel="stylesheet" href="~/css/webchatview.css" />
-    <link rel="stylesheet" href="~/lib//font-awesome/css/font-awesome.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/lib//font-awesome/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="~/lib/font-awesome/css/font-awesome.min.css" asp-append-version="true" />
 }
+
+
 
 @section Scripts
     {
-
-    <script src="~/lib//webix/webix.min.js"></script>
-    <script src="~/js/webchatview.js"></script>
     <script src="~/lib/signalr/dist/browser/signalr.min.js"></script>
+    <script src="~/js/globals.js"></script>
+    <script src="~/js/GUIRenderable.js"></script>
+    <script src="~/js/GUIElement.js"></script>
+    <script src="~/js/GUIChannelListElement.js"></script>
+    <script src="~/js/GUIUserListElement.js"></script>
+    <script src="~/js/GUIChatFeedElement.js"></script>
+    <script src="~/js/Channel.js"></script>
+    <script src="~/js/User.js"></script>
+    <script src="~/js/helpers.js"></script>
     <script src="~/js/chat.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#action_menu_btn').click(function () {
+                $('.action_menu').toggle();
+            });            
+        });
+        
+    </script>
 
 
 }
+

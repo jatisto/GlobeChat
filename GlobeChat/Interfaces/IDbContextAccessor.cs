@@ -8,5 +8,7 @@ namespace GlobeChat.Interfaces
     interface IDbContextAccessor
     {
         void  AddNewConnectionInfo(string username, string connectionid);
+        Task  SendMessageToChannel(string message);
+        Task  HandleUserDiscionnection(string connectionid);
     }
 }

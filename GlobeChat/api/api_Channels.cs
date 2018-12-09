@@ -6,12 +6,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using GlobeChat.Models;
-using Newtonsoft.Json;
-using System.Collections.Specialized;
-using System.Diagnostics;
+
 using SignalRWebPack.Hubs;
 using GlobeChat;
 using Microsoft.AspNetCore.SignalR;
+using static GlobeChat.Enums.Chat;
 
 namespace GlobChat.api
 {
@@ -28,7 +27,7 @@ namespace GlobChat.api
     }
 
     [Route("api/channels")]
-    [ApiController]
+    [ApiController] 
     public class ChannelsControllerAPI : ControllerBase
     {
         private readonly GlobeChatContext _context;
@@ -41,24 +40,27 @@ namespace GlobChat.api
         }
 
         [Route("{id}/join")]
-        [HttpGet]
+        [HttpPost]
         public async Task JoinChannelAsync([FromRoute] int Id, string Login)
         {
+            
             var newChannel = _context.Channels.Where(c => c.Id == Id).Single();
-            var user = _context.User.FirstOrDefault(u => u.Login == HttpContext.User.Identity.Name);
-            string currentChannelName = "";
-            if (user.Channel != null) currentChannelName = user.Channel.ChannelName;
-            await _chatHubContext.Groups.RemoveFromGroupAsync(user.ConnectionId.connectionId, user.Channel.ChannelName);
-            await _chatHubContext.Clients.Group(user.Channel.ChannelName).SendAsync("userLefChannel",  user.Login, user.Channel.ChannelName);            
+            var user = await _context.User.FirstOrDefaultAsync(u => u.Login == HttpContext.User.Identity.Name);
+            string currentChannelName = "";       
+            if (user.Channel != null) {
+                 currentChannelName = user.Channel.ChannelName;
+                 await _chatHubContext.Groups.RemoveFromGroupAsync(user.ConnectionId.connectionId, user.Channel.ChannelName);
+                 await _chatHubContext.Clients.Group(currentChannelName).SendAsync(USER_LEFT_CHANNEL, user.Login, user.Channel.ChannelName);
+                 await _chatHubContext.Clients.Group(newChannel.ChannelName).SendAsync(USER_JOINED_CHANNEL, user.Login, newChannel);                
+            }                       
+            await _chatHubContext.Groups.AddToGroupAsync(user.ConnectionId.connectionId, newChannel.ChannelName);
             user.Channel = newChannel;
             newChannel.Users.Add(user);            
-            await _chatHubContext.Groups.AddToGroupAsync(user.ConnectionId.connectionId, newChannel.ChannelName);
-            await _chatHubContext.Clients.Group(user.Channel.ChannelName).SendAsync("userJoinedChannel", user.Login, user.Channel.ChannelName);
             await _context.SaveChangesAsync();
         }
 
-        [Route("")]
-        [HttpGet]
+        [Route("/api/getChannels")]
+        [HttpPost]
         public async Task<dynamic> GetChannels()
         {
             var Few = from c in _context.Channels
@@ -75,12 +77,9 @@ namespace GlobChat.api
         [Route("{id}/feed")]
         public void GetFeed()
         {
-            //List<Response> t = new List<Response>();
-            //for (int i = 0; i < 100000; i++) t.Add(new Response("Michael", Helpers.GenerateRandomString(20)));
-            // return JsonConvert.SerializeObject(t);
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("{id}/users")]
         public async Task<dynamic> GetUsers([FromRoute] int id)
         {
@@ -90,6 +89,7 @@ namespace GlobChat.api
                       select new
                       {
                           Login = u.Login,
+                          Id = u.Login,
                           Age = DateTime.Now.Year - u.DateOfBirth.Year,
                           Gender = u.Gender
                       };
@@ -101,7 +101,7 @@ namespace GlobChat.api
         [Route("populate")]
         public void populate()
         {
-            for (int i = 0; i < 100; i++)
+            for (int i = 0; i < 1000; i++)
             {
                 var u = new User();
                 u.Login = Helpers.GenerateGuestUserLogin();
@@ -111,9 +111,20 @@ namespace GlobChat.api
                 u.EmailConfirmed = true;
                 u.DateOfBirth = DateTime.Now;
                 u.Gender = "Male";
+                var c = (from cn in _context.Channels orderby Guid.NewGuid() select cn).Take(1).Single();
+                c.Users.Add(u);
                 _context.User.Add(u);
                 _context.SaveChanges();
             }
+        }
+
+        [Route("clear")]
+        public void clear()
+        {
+            foreach(var Channel in _context.Channels)
+                Channel.Users.Clear();
+            _context.SaveChanges();            
+
         }
 
         [HttpGet]
