@@ -12,6 +12,8 @@ namespace GlobeChat.Enums
         public const string USER_CONNECTION_TIMEOUT = "userConnectionTimeOut";
         public const string USER_DISCONNECTED = "userDisconnected";
         public const string CHANNEL_MESSAGE_RECEIVED = "channelMessageReceived";
-        public const string NEW_MESSAGE = "newMessage";        
+        public const string NEW_MESSAGE = "newMessage";
+        public const string INVITATION_RECEIVED = "invitationReceived";
+        public const string INVITATION_SEND = "invitationSend";
     }
 }

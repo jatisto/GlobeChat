@@ -1,4 +1,61 @@
 "use strict";
+var currentChannelName = "Global";
+var channelList = $(".channel-list");
+var userList = $(".user-list");
+var feedList = $(".feed-list");
+var chatTabs = $(".chat-tabs");
+var userMessage = $(".message");
+var channels = new Array();
+var users = new Array();
+//var GUIUsers = new Array<GUIUserListElement>();
+var conversations = {};
+userMessage.keypress(function (e) {
+    switch (e.key) {
+        case "Enter":
+            {
+                sendMessage(userMessage.val());
+                userMessage.val('');
+                break;
+            }
+            ;
+    }
+});
+$('.body').fadeTo("slow", 0.8);
+const connection = new signalR.HubConnectionBuilder()
+    .withUrl("/hub")
+    .configureLogging(signalR.LogLevel.Information)
+    .build();
+function sendMessage(message) {
+    console.log("Message sent : ");
+    connection.send(NEW_MESSAGE, message);
+}
+function sendInvitation(receiver) {
+    console.log("Invitation sent to : " + receiver);
+    connection.send(INVITATION_SEND, receiver);
+}
+
+"use strict";
+var CONVERSATION_STATUS;
+(function (CONVERSATION_STATUS) {
+    CONVERSATION_STATUS[CONVERSATION_STATUS["PENDING"] = 0] = "PENDING";
+    CONVERSATION_STATUS[CONVERSATION_STATUS["ACCEPTED"] = 1] = "ACCEPTED";
+    CONVERSATION_STATUS[CONVERSATION_STATUS["REJECTED"] = 2] = "REJECTED";
+    CONVERSATION_STATUS[CONVERSATION_STATUS["BLOCKED"] = 3] = "BLOCKED";
+})(CONVERSATION_STATUS || (CONVERSATION_STATUS = {}));
+const USER_LEFT_CHANNEL = "userLeftChannel";
+const USER_JOINED_CHANNEL = "userJoinedChannel";
+const USER_CONNECTION_TIMEOUT = "userConnectionTimeOut";
+const USER_DISCONNECTED = "userDisconnected";
+const CHANNEL_MESSAGE_RECEIVED = "channelMessageReceived";
+const PRIVATE_MESSAGE_RECEIVED = "privateMessageReceived";
+const INVITATION_RECEIVED = "invitationReceived";
+const INVITATION_SEND = "invitationSend";
+const NEW_MESSAGE = "newMessage";
+const MALE = "Male";
+const FEMAILE = "Female";
+const GLOBAL_CHANNEL = 1;
+
+"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -119,3 +176,5 @@ function loadConversation(login) {
     feedList.html('');
     feedList.append(conversation.get());
 }
+
+"use strict";

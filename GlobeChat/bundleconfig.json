@@ -1,0 +1,34 @@
+[
+  {
+    "outputFileName": "wwwroot/js/bundle.js",
+    "inputFiles": [
+      "wwwroot/js/chat.js",
+      "wwwroot/js/globals.js",
+      "wwwroot/js/Channel.js",
+      "wwwroot/js/GUIChannelListElement.js",
+      "wwwroot/js/GUIChatFeedElement.js",
+      "wwwroot/js/GUIElement.js",
+      "wwwroot/js/GUIRenderable.js",
+      "wwwroot/js/GUIUserListElement.js",
+      "wwwroot/js/helpers.js",
+      "wwwroot/js/site.js",
+      "wwwroot/js/User.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/test.js",
+    "inputFiles": [
+      "wwwroot/js/Channel.js",
+      "wwwroot/js/chat.js",
+      "wwwroot/js/globals.js",
+      "wwwroot/js/GUIChannelListElement.js",
+      "wwwroot/js/GUIChatFeedElement.js",
+      "wwwroot/js/GUIElement.js",
+      "wwwroot/js/GUIRenderable.js",
+      "wwwroot/js/GUIUserListElement.js",
+      "wwwroot/js/helpers.js",
+      "wwwroot/js/site.js",
+      "wwwroot/js/User.js"
+    ]
+  }
+]

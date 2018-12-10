@@ -109,6 +109,33 @@ namespace GlobeChat.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Invitations",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    senderId = table.Column<int>(nullable: true),
+                    receiverId = table.Column<int>(nullable: true),
+                    Status = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Invitations", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Invitations_User_receiverId",
+                        column: x => x.receiverId,
+                        principalTable: "User",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Invitations_User_senderId",
+                        column: x => x.senderId,
+                        principalTable: "User",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_ActivationCodes_UserId",
                 table: "ActivationCodes",
@@ -119,6 +146,16 @@ namespace GlobeChat.Migrations
                 table: "Connections",
                 column: "id",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Invitations_receiverId",
+                table: "Invitations",
+                column: "receiverId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Invitations_senderId",
+                table: "Invitations",
+                column: "senderId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_User_ChannelId",
@@ -141,6 +178,9 @@ namespace GlobeChat.Migrations
 
             migrationBuilder.DropTable(
                 name: "DbLog");
+
+            migrationBuilder.DropTable(
+                name: "Invitations");
 
             migrationBuilder.DropTable(
                 name: "User");

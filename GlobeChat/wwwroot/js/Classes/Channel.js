@@ -5,4 +5,10 @@ class Channel {
         this.userCount = userCount;
         this.id = id;
     }
+    Render() {
+        this.element.Render();
+    }
+    Remove() {
+        this.element.Remove();
+    }
 }

@@ -1,9 +1,19 @@
 "use strict";
+var CONVERSATION_STATUS;
+(function (CONVERSATION_STATUS) {
+    CONVERSATION_STATUS[CONVERSATION_STATUS["PENDING"] = 0] = "PENDING";
+    CONVERSATION_STATUS[CONVERSATION_STATUS["ACCEPTED"] = 1] = "ACCEPTED";
+    CONVERSATION_STATUS[CONVERSATION_STATUS["REJECTED"] = 2] = "REJECTED";
+    CONVERSATION_STATUS[CONVERSATION_STATUS["BLOCKED"] = 3] = "BLOCKED";
+})(CONVERSATION_STATUS || (CONVERSATION_STATUS = {}));
 const USER_LEFT_CHANNEL = "userLeftChannel";
 const USER_JOINED_CHANNEL = "userJoinedChannel";
 const USER_CONNECTION_TIMEOUT = "userConnectionTimeOut";
 const USER_DISCONNECTED = "userDisconnected";
 const CHANNEL_MESSAGE_RECEIVED = "channelMessageReceived";
+const PRIVATE_MESSAGE_RECEIVED = "privateMessageReceived";
+const INVITATION_RECEIVED = "invitationReceived";
+const INVITATION_SEND = "invitationSend";
 const NEW_MESSAGE = "newMessage";
 const MALE = "Male";
 const FEMAILE = "Female";

@@ -28,19 +28,10 @@
                    
                 </ul>
             </div>
-            <ul class="nav nav-tabs">
-                <li class="nav-item">
-                    <a class="nav-link active" href="#">Active</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Link</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Link</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link disabled" href="#">Disabled</a>
-                </li>
+            <ul class="nav nav-tabs chat-tabs">
+                <li class="nav-item nav-link main-channel-tab">
+                    
+                </li>                
             </ul>
 
             <div class="input-group card-footer">
@@ -77,22 +68,23 @@
     <link rel="stylesheet" href="~/lib//font-awesome/css/font-awesome.min.css" />
     <link rel="stylesheet" href="~/lib/font-awesome/css/font-awesome.min.css" asp-append-version="true" />
 }
-
-
-
 @section Scripts
     {
     <script src="~/lib/signalr/dist/browser/signalr.min.js"></script>
     <script src="~/js/globals.js"></script>
-    <script src="~/js/GUIRenderable.js"></script>
-    <script src="~/js/GUIElement.js"></script>
-    <script src="~/js/GUIChannelListElement.js"></script>
-    <script src="~/js/GUIUserListElement.js"></script>
-    <script src="~/js/GUIChatFeedElement.js"></script>
-    <script src="~/js/Channel.js"></script>
-    <script src="~/js/User.js"></script>
+    <script src="~/js/GUI/GUIRenderable.js"></script>
+    <script src="~/js/GUI/GUIElement.js"></script>
+    <script src="~/js/GUI/GUIChannelListElement.js"></script>
+    <script src="~/js/GUI/GUIUserListElement.js"></script>
+    <script src="~/js/GUI/GUIChatFeedElement.js"></script>
+    <script src="~/js/GUI/GUIChatTabElement.js"></script>
+    <script src="~/js/GUI/GUIButon.js"></script>
+    <script src="~/js/Classes/Conversation.js"></script>
+    <script src="~/js/Classes/Channel.js"></script>
+    <script src="~/js/Classes/User.js"></script>
     <script src="~/js/helpers.js"></script>
     <script src="~/js/chat.js"></script>
+    <script src="~/js/connection.js"></script>
     <script>
         $(document).ready(function () {
             $('#action_menu_btn').click(function () {

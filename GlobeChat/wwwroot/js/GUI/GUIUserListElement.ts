@@ -2,17 +2,16 @@
     constructor(parent: JQuery<HTMLElement>, User:User) {
         super(parent);
         this.User = User;
-    }
-    Render(): void {        
-        var element = $(`<li class="list-group-item">
+        this.selector = $(`<li class="list-group-item">
+                        <img src ="https://place-hold.it/50" class="btn-danger rounded-circle"></img>
                         ${this.User.login}
                         <span class="badge">
                             ${this.User.gender}, ${this.User.age}
-                        </span> </li>`);          
-        this.parent.append(element)
-        this.selector = element;
-        this.isVisible = true;
-        element.click(()=>alert(this.User.login));
+                        </span> </li>`);        
+    }
+    Render(): void {                
+        this.parent.append(this.selector)
+        this.isVisible = true;        
     }
     Remove(): void {
         this.selector.remove();

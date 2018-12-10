@@ -1,17 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using GlobeChat.Models;
-
 using SignalRWebPack.Hubs;
 using GlobeChat;
 using Microsoft.AspNetCore.SignalR;
 using static GlobeChat.Enums.Chat;
-
 namespace GlobChat.api
 {
     public class Response
@@ -41,7 +38,7 @@ namespace GlobChat.api
 
         [Route("{id}/join")]
         [HttpPost]
-        public async Task JoinChannelAsync([FromRoute] int Id, string Login)
+        public async Task<string> JoinChannelAsync([FromRoute] int Id, string Login)
         {
             
             var newChannel = _context.Channels.Where(c => c.Id == Id).Single();
@@ -50,13 +47,14 @@ namespace GlobChat.api
             if (user.Channel != null) {
                  currentChannelName = user.Channel.ChannelName;
                  await _chatHubContext.Groups.RemoveFromGroupAsync(user.ConnectionId.connectionId, user.Channel.ChannelName);
-                 await _chatHubContext.Clients.Group(currentChannelName).SendAsync(USER_LEFT_CHANNEL, user.Login, user.Channel.ChannelName);
-                 await _chatHubContext.Clients.Group(newChannel.ChannelName).SendAsync(USER_JOINED_CHANNEL, user.Login, newChannel);                
+                 await _chatHubContext.Clients.Group(currentChannelName).SendAsync(USER_LEFT_CHANNEL, user.Login, currentChannelName);
+                await _chatHubContext.Clients.Group(newChannel.ChannelName).SendAsync(USER_JOINED_CHANNEL, user.ToJson());             
             }                       
             await _chatHubContext.Groups.AddToGroupAsync(user.ConnectionId.connectionId, newChannel.ChannelName);
             user.Channel = newChannel;
             newChannel.Users.Add(user);            
             await _context.SaveChangesAsync();
+            return newChannel.ChannelName;
         }
 
         [Route("/api/getChannels")]

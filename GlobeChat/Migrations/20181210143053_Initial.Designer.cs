@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GlobeChat.Migrations
 {
     [DbContext(typeof(GlobeChatContext))]
-    [Migration("20181205111856_Initial")]
+    [Migration("20181210143053_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -84,6 +84,27 @@ namespace GlobeChat.Migrations
                     b.ToTable("DbLog");
                 });
 
+            modelBuilder.Entity("GlobeChat.Models.Invitation", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("Status");
+
+                    b.Property<int?>("receiverId");
+
+                    b.Property<int?>("senderId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("receiverId");
+
+                    b.HasIndex("senderId");
+
+                    b.ToTable("Invitations");
+                });
+
             modelBuilder.Entity("GlobeChat.Models.User", b =>
                 {
                     b.Property<int>("Id")
@@ -138,6 +159,17 @@ namespace GlobeChat.Migrations
                         .WithOne("ConnectionId")
                         .HasForeignKey("GlobeChat.Models.Connection", "id")
                         .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("GlobeChat.Models.Invitation", b =>
+                {
+                    b.HasOne("GlobeChat.Models.User", "receiver")
+                        .WithMany()
+                        .HasForeignKey("receiverId");
+
+                    b.HasOne("GlobeChat.Models.User", "sender")
+                        .WithMany()
+                        .HasForeignKey("senderId");
                 });
 
             modelBuilder.Entity("GlobeChat.Models.User", b =>

@@ -1,6 +1,8 @@
 ﻿
 using GlobChat.Globals;
+using GlobeChat.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -9,7 +11,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace GlobeChat.Models
 {
-    public class User
+    public class User : IJSONable
     {
         public int Id { get; set; }
 
@@ -74,7 +76,16 @@ namespace GlobeChat.Models
             };
         }
 
-
+        public string ToJson()
+        {
+            var usr = new
+            {
+                login = this.Login,
+                gender = this.Gender,
+                age = DateTime.Now.Year - this.DateOfBirth.Year
+            };
+            return JsonConvert.SerializeObject(usr);
+        }
     }
 
 

@@ -28,6 +28,12 @@ namespace GlobeChat.Models
                .HasKey(c => c.Id);
             modelBuilder.Entity<User>()
                 .HasOne(u => u.ConnectionId);
+
+            modelBuilder.Entity<Conversation>()
+                .HasOne(u => u.sender);
+            modelBuilder.Entity<Conversation>()
+                .HasOne(u => u.receiver);
+
         }
         public GlobeChatContext(DbContextOptions<GlobeChatContext> options)
             : base(options)
@@ -38,6 +44,7 @@ namespace GlobeChat.Models
         public DbSet<GlobeChat.Models.ActivationCode> ActivationCodes { get; set; }
         public DbSet<GlobeChat.Models.Channel> Channels { get; set; }
         public DbSet<GlobeChat.Models.Connection> Connections { get; set; }
+        public DbSet<GlobeChat.Models.Conversation> Conversations { get; set; }
 
 
     }

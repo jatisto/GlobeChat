@@ -26,6 +26,16 @@
     {
       "library": "jquery@3.2.1",
       "destination": "wwwroot/lib/jquery/"
+    },
+    {
+      "library": "moment@2.22.1",
+      "destination": "wwwroot/lib/moment/"
     }
-  ]
+  ,
+{
+  "provider": "unpkg",
+  "library": "moment@2.9.0",
+  "destination": "wwwroot/lib/moment/"
+}
+]
 }

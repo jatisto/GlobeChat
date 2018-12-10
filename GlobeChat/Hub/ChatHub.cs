@@ -26,16 +26,69 @@ namespace SignalRWebPack.Hubs
 
         public async Task NewMessage(string message)
         {
-            await SendMessageToChannel(message);
+            using (var serviceScope = m_ServiceProvider.CreateScope())
+            {
+                using (var _context = serviceScope.ServiceProvider.GetService<GlobeChatContext>())
+                {
+                    var UserConnection = await _context.Connections.FirstOrDefaultAsync(c => c.connectionId == Context.ConnectionId);
+                    var Channel = UserConnection.User.Channel;
+                    await Clients.Group(Channel.ChannelName).SendAsync(CHANNEL_MESSAGE_RECEIVED, UserConnection.User.Login, message, Channel.ChannelName);
+                }
+            }
         }
-        public override async Task OnConnectedAsync()
+
+        public async Task InvitationSend( string receiver)
         {
-            AddNewConnectionInfo(Context.User.Identity.Name, Context.ConnectionId);
+            using (var serviceScope = m_ServiceProvider.CreateScope())
+            {
+                using (var _context = serviceScope.ServiceProvider.GetService<GlobeChatContext>())
+                {                    
+                    var SenderConnection = await _context.Connections.FirstOrDefaultAsync(c => c.connectionId == Context.ConnectionId);
+                    var ReceiverConnection = await _context.Connections.FirstOrDefaultAsync(c => c.User.Login == receiver);
+                    var invExist = await _context.Conversations.FirstOrDefaultAsync(i => i.sender == SenderConnection.User && i.receiver == ReceiverConnection.User);
+                    /*
+                    if (invExist == null && (SenderConnection.connectionId != ReceiverConnection.connectionId)) {
+                        await Clients.Client(ReceiverConnection.connectionId).SendAsync(INVITATION_RECEIVED, SenderConnection.User.Login);
+                        await _context.Conversations.AddAsync(new Conversation(SenderConnection.User, ReceiverConnection.User, INVITATION_STATUS.PENDING));
+                        await _context.SaveChangesAsync();
+                    }             
+                    */
+                   
+                        await Clients.Client(ReceiverConnection.connectionId).SendAsync(INVITATION_RECEIVED, SenderConnection.User.Login);
+                        await _context.Conversations.AddAsync(new Conversation(SenderConnection.User, ReceiverConnection.User, INVITATION_STATUS.PENDING));
+                        await _context.SaveChangesAsync();
+                   
+                }
+            }
+        }
+
+        public override async Task OnConnectedAsync()
+        {   
+            AddNewConnectionInfo(Context.User.Identity.Name, Context.ConnectionId);           
             await base.OnConnectedAsync().ConfigureAwait(false);
         }
+
         public async override Task OnDisconnectedAsync(Exception exception)
         {
-            await HandleUserDiscionnection(Context.ConnectionId);
+            using (var serviceScope = m_ServiceProvider.CreateScope())
+            {
+                using (var _context = serviceScope.ServiceProvider.GetService<GlobeChatContext>())
+                {
+                    var UserConnection = await _context.Connections.FirstOrDefaultAsync(c => c.connectionId == Context.ConnectionId);
+
+                    if (UserConnection != null)
+                    {
+                        var Channel = UserConnection.User.Channel;
+                        var User = UserConnection.User;
+                        await Clients.Group(Channel.ChannelName).SendAsync(USER_CONNECTION_TIMEOUT, UserConnection.User.Login, " disconnected", Channel.ChannelName);
+                        Channel.Users.Remove(User);
+                        User.Channel = null;
+
+                        await _context.SaveChangesAsync();
+
+                    }
+                }
+            }
         }
 
 
@@ -68,44 +121,26 @@ namespace SignalRWebPack.Hubs
                 }
             }
         }
-
   
-        public async Task SendMessageToChannel(string message)
+        public async Task SendMessageToChannel(string message, string channel)
         {
             using (var serviceScope = m_ServiceProvider.CreateScope())
             {
                 using (var _context = serviceScope.ServiceProvider.GetService<GlobeChatContext>())
                 {                   
                     var UserConnection = await _context.Connections.FirstOrDefaultAsync(c => c.connectionId == Context.ConnectionId);
-                    var Channel = UserConnection.User.Channel;
-                    await Clients.Group(Channel.ChannelName).SendAsync(CHANNEL_MESSAGE_RECEIVED, UserConnection.User.Login, message);                    
+                    var Channel = UserConnection.User.Channel.ChannelName;
+                    await Clients.Group(Channel).SendAsync(CHANNEL_MESSAGE_RECEIVED, UserConnection.User.Login, message, channel);                    
                 }
             }
         }
-     
 
-        public async Task HandleUserDiscionnection(string connectionid)
+        public Task HandleUserDiscionnection(string connectionid)
         {
-            using (var serviceScope = m_ServiceProvider.CreateScope())
-            {
-                using (var _context = serviceScope.ServiceProvider.GetService<GlobeChatContext>())
-                {
-                    var UserConnection = await _context.Connections.FirstOrDefaultAsync(c => c.connectionId == connectionid);
-                    
-                    if (UserConnection != null)
-                    {
-                        var Channel = UserConnection.User.Channel;
-                        var User = UserConnection.User;
-                        await Clients.Group(Channel.ChannelName).SendAsync(USER_CONNECTION_TIMEOUT, UserConnection.User.Login, " disconnected");
-                        Channel.Users.Remove(User);
-                        User.Channel = null;
-
-                        await _context.SaveChangesAsync();
-                        
-                    }                   
-                }
-            }
+            throw new NotImplementedException();
         }
+
+     
     }
     
 }
