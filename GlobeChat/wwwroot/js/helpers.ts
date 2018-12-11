@@ -16,21 +16,20 @@
     })
 }
 
-
-function addMessageToFeed(login: string, message: string, channel: string) {
+function addMessageToFeed(login: string, message: string) {
     var el = new GUIChatFeedElement(feedList, login, message);
 }
-
 
 async function joinChannel(id: number) {
     await ajaxRequestParams("POST", "api/Channels/" + id + "/join", "", null).then((channelName) => {
         feedList.html("");
         loadChannels();
         loadUsers(id);
+        conversations[channelName] = new Conversation(channelName);
+        delete conversations[currentChannelName];
         currentChannelName = channelName;
     });
 }
-
 
 function loadChannels(): void {    
     var resp = ajaxRequestParams("POST", "api/getChannels", "", null);
@@ -100,6 +99,18 @@ function generateRandomString(length:number):string
     return text;
 }
 
+function addConversation(login:string, hash:string) {
+    let tab = new GUIChatTabElement(chatTabs, login, hash)
+    if (hash in conversations) {
+        tab.rejectButton.Remove();
+        tab.acceptButton.Remove();
+        tab.closeButton.Render();
+    }
+    chatTabs.append(tab.selector);
+    tabs[hash] = tab.selector;
+}
+
 function strip(s:string): string {
     return s.replace(/<(?:.|\n)*?>/gm, '');
 }
+

@@ -24,7 +24,7 @@ function ajaxRequestParams(_type, _url, _params, _callback) {
         });
     });
 }
-function addMessageToFeed(login, message, channel) {
+function addMessageToFeed(login, message) {
     var el = new GUIChatFeedElement(feedList, login, message);
 }
 function joinChannel(id) {
@@ -33,6 +33,8 @@ function joinChannel(id) {
             feedList.html("");
             loadChannels();
             loadUsers(id);
+            conversations[channelName] = new Conversation(channelName);
+            delete conversations[currentChannelName];
             currentChannelName = channelName;
         });
     });
@@ -101,6 +103,16 @@ function generateRandomString(length) {
     for (var i = 0; i < length; i++)
         text += possible.charAt(Math.floor(Math.random() * possible.length));
     return text;
+}
+function addConversation(login, hash) {
+    let tab = new GUIChatTabElement(chatTabs, login, hash);
+    if (hash in conversations) {
+        tab.rejectButton.Remove();
+        tab.acceptButton.Remove();
+        tab.closeButton.Render();
+    }
+    chatTabs.append(tab.selector);
+    tabs[hash] = tab.selector;
 }
 function strip(s) {
     return s.replace(/<(?:.|\n)*?>/gm, '');

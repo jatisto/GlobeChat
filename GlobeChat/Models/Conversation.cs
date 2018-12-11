@@ -2,10 +2,10 @@
 
 namespace GlobeChat.Models
 {
-    public enum INVITATION_STATUS { PENDING, ACCEPTED, REJECTED, BLOCKED}
+    public enum CONVERSATION_STATUS { PENDING, ACCEPTED, REJECTED, BLOCKED}
     public class Conversation
     {
-        public Conversation(User sender, User receiver, INVITATION_STATUS status)
+        public Conversation(User sender, User receiver, CONVERSATION_STATUS status)
         {
             this.sender = sender;
             this.receiver = receiver;            
@@ -18,7 +18,7 @@ namespace GlobeChat.Models
 
         virtual public User sender { get; set; }
         virtual public User receiver { get; set; }
-        public INVITATION_STATUS Status { get; set; }        
+        public CONVERSATION_STATUS Status { get; set; }        
 
     }
 }

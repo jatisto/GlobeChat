@@ -1,0 +1,1 @@
+﻿Joing the same channel twice causes a glitch where conversation is not being created
