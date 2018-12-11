@@ -11,6 +11,8 @@ const PRIVATE_MESSAGE_RECEIVED: string = "privateMessageReceived";
 const INVITATION_RECEIVED: string = "invitationReceived";
 const INVITATION_SEND: string = "invitationSend";
 const NEW_MESSAGE: string = "newMessage";
+const NEW_PRIVATE_MESSAGE: string = "newPrivateMessage";
+
 const MALE: string = "Male";
 const FEMAILE: string = "Female";
 const GLOBAL_CHANNEL: number =  1;

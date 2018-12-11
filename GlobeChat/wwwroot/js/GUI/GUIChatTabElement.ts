@@ -1,9 +1,9 @@
 ﻿class GUIChatTabElement extends GUIElement implements GUIRenderable {
-    constructor(parent: JQuery<HTMLElement>, string:name) {
+    constructor(parent: JQuery<HTMLElement>, name:string) {
         super(parent);
-        this.User = User;
+        this.name = name;
         this.selector = $(`<li class="nav-item nav-link channel-tab"> ${this.name} </li>`);
-        this.selector.click(() => { loadConversation(this.User.login); currentChannelName = this.User.login })
+        //this.selector.click(() => { loadConversation(this.name); currentChannelName = this.name })
     }
     Render(): void {                
         this.parent.append(this.selector)

@@ -1,18 +1,19 @@
 "use strict";
 class Conversation {
-    constructor(name, status) {
+    constructor(hash) {
         this.feed = new Array();
-        this.name = name;
-        this.status = status;
+        this.hash = hash;
     }
-    get() {
-        this.feed.forEach(e => {
-            this.body.html('');
-            this.body.append(e.selector);
+    add(message) {
+        this.feed.push(message);
+    }
+    load() {
+        feedList.html('');
+        this.feed.forEach(m => {
+            var el = $(`<li class="list-group-item">
+                            <span class="badge badge-secondary">${m.login}</span> <span>${m.message} </span>
+                        </li>`);
+            feedList.append(el);
         });
-        return this.body;
-    }
-    add(element) {
-        this.feed.push(element);
     }
 }

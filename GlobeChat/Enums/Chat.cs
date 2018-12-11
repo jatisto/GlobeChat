@@ -15,5 +15,6 @@ namespace GlobeChat.Enums
         public const string NEW_MESSAGE = "newMessage";
         public const string INVITATION_RECEIVED = "invitationReceived";
         public const string INVITATION_SEND = "invitationSend";
+        public const string PRIVATE_MESSAGE_RECEIVED = "privateMessageReceived";
     }
 }

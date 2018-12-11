@@ -37,6 +37,19 @@ namespace SignalRWebPack.Hubs
             }
         }
 
+        public async Task NewPrivateMessage(string hash, string message)
+        {
+            using (var serviceScope = m_ServiceProvider.CreateScope())
+            {
+                using (var _context = serviceScope.ServiceProvider.GetService<GlobeChatContext>())
+                {
+                    var UserConnection = await _context.Connections.FirstOrDefaultAsync(c => c.connectionId == Context.ConnectionId);
+                    var Channel = UserConnection.User.Channel;
+                    await Clients.Group(hash).SendAsync(PRIVATE_MESSAGE_RECEIVED, hash, UserConnection.User.Login, message);
+                }
+            }
+        }
+
         public async Task InvitationSend( string receiver)
         {
             using (var serviceScope = m_ServiceProvider.CreateScope())
@@ -53,11 +66,12 @@ namespace SignalRWebPack.Hubs
                         await _context.SaveChangesAsync();
                     }             
                     */
-                   
-                        await Clients.Client(ReceiverConnection.connectionId).SendAsync(INVITATION_RECEIVED, SenderConnection.User.Login);
-                        await _context.Conversations.AddAsync(new Conversation(SenderConnection.User, ReceiverConnection.User, INVITATION_STATUS.PENDING));
-                        await _context.SaveChangesAsync();
-                   
+                        var con = new Conversation(SenderConnection.User, ReceiverConnection.User, INVITATION_STATUS.PENDING);
+                        await Clients.Client(ReceiverConnection.connectionId).SendAsync(INVITATION_RECEIVED, SenderConnection.User.Login, con.hash);
+                        await Groups.AddToGroupAsync(SenderConnection.connectionId, con.hash);
+                        await Groups.AddToGroupAsync(ReceiverConnection.connectionId, con.hash);
+                        await _context.Conversations.AddAsync(con);
+                        await _context.SaveChangesAsync();                   
                 }
             }
         }

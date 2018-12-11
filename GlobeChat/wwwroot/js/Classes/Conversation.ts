@@ -1,22 +1,22 @@
-﻿
-class Conversation {
-    constructor(name: string, status: CONVERSATION_STATUS) {
-        this.name = name;
-        this.status = status;           
+﻿class Conversation {
+
+    constructor(hash: string) {
+        this.hash = hash;
     }
-    name: string;
-    status: CONVERSATION_STATUS;
-    private body!: JQuery<HTMLElement>;    
+
+    hash: string;
     feed: GUIChatFeedElement[] = new Array();
-    get(): JQuery<HTMLElement>{
-        this.feed.forEach(e => {
-            this.body.html('');
-            this.body.append(e.selector);
-        })
-        return this.body;
+    add(message: GUIChatFeedElement) {
+        this.feed.push(message);
     }
-    add(element: GUIChatFeedElement): void {
-        this.feed.push(element);
+    load() {
+        feedList.html('');
+        this.feed.forEach(m => {
+            var el = $(`<li class="list-group-item">
+                            <span class="badge badge-secondary">${m.login}</span> <span>${m.message} </span>
+                        </li>`);
+            feedList.append(el);
+        });
     }
-    
+
 }

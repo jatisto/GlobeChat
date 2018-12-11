@@ -8,19 +8,22 @@ connection.on(USER_JOINED_CHANNEL, (user, newChannel, channel) => {
     addMessageToFeed("Info:", strip(user.login + " joined channel"), channel);
 });
 connection.on(USER_CONNECTION_TIMEOUT, (login, message, channel) => {
-    console.log("User timedout : " + login + " : " + message + channel);
+    console.log("User timed out : " + login + " : " + message + channel);
     addMessageToFeed(login, strip(message), channel);
     removeUserFromList(login);
 });
-connection.on(USER_LEFT_CHANNEL, (login, channel) => {
-    console.log("USER_LEFT_CHANNEL " + login + " left channel.");
-    removeUserFromList(login);
+connection.on(USER_LEFT_CHANNEL, (user, newChannel, channel) => {
+    user = JSON.parse(user);
+    addMessageToFeed("Info:", strip(user.login + " left channel"), channel);
+    removeUserFromList(user.login);
 });
-connection.on(USER_JOINED_CHANNEL, (login, channel) => {
-    console.log("User joined this channel");
+connection.on(INVITATION_RECEIVED, (login, hash) => {
+    console.log("received new invitation " + login + " " + hash);
+    conversations[hash] = new Conversation(hash);
 });
-connection.on(INVITATION_RECEIVED, (login) => {
-    addChatTab(login);
+connection.on(PRIVATE_MESSAGE_RECEIVED, (hash, login, message) => {
+    console.log("private message received " + hash + " " + login + " " + message);
+    conversations[hash].add(new GUIChatFeedElement($(hash), login, message));
 });
 connection.start()
     .catch(err => console.log(err))

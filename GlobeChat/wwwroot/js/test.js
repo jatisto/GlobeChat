@@ -7,7 +7,6 @@ var chatTabs = $(".chat-tabs");
 var userMessage = $(".message");
 var channels = new Array();
 var users = new Array();
-//var GUIUsers = new Array<GUIUserListElement>();
 var conversations = {};
 userMessage.keypress(function (e) {
     switch (e.key) {
@@ -28,6 +27,10 @@ const connection = new signalR.HubConnectionBuilder()
 function sendMessage(message) {
     console.log("Message sent : ");
     connection.send(NEW_MESSAGE, message);
+}
+function sendPrivateMessage(hash, message) {
+    console.log("Message sent : ");
+    connection.send(NEW_PRIVATE_MESSAGE, hash, message);
 }
 function sendInvitation(receiver) {
     console.log("Invitation sent to : " + receiver);
@@ -51,6 +54,7 @@ const PRIVATE_MESSAGE_RECEIVED = "privateMessageReceived";
 const INVITATION_RECEIVED = "invitationReceived";
 const INVITATION_SEND = "invitationSend";
 const NEW_MESSAGE = "newMessage";
+const NEW_PRIVATE_MESSAGE = "newPrivateMessage";
 const MALE = "Male";
 const FEMAILE = "Female";
 const GLOBAL_CHANNEL = 1;
@@ -81,6 +85,19 @@ function ajaxRequestParams(_type, _url, _params, _callback) {
         });
     });
 }
+function addMessageToFeed(login, message, channel) {
+    var el = new GUIChatFeedElement(feedList, login, message);
+}
+function joinChannel(id) {
+    return __awaiter(this, void 0, void 0, function* () {
+        yield ajaxRequestParams("POST", "api/Channels/" + id + "/join", "", null).then((channelName) => {
+            feedList.html("");
+            loadChannels();
+            loadUsers(id);
+            currentChannelName = channelName;
+        });
+    });
+}
 function loadChannels() {
     var resp = ajaxRequestParams("POST", "api/getChannels", "", null);
     resp.then(function (response) {
@@ -95,12 +112,6 @@ function loadChannels() {
         });
     });
 }
-function addMessageToFeed(login, message, channel) {
-    console.log("Adding message to channel " + channel);
-    new GUIChatFeedElement(feedList, login, message);
-    let c = conversations[channel];
-    c.add(new GUIChatFeedElement($("#" + channel), login, message));
-}
 function loadUsers(id) {
     users = [];
     var resp = ajaxRequestParams("POST", "api/Channels/" + id + "/users", "", null);
@@ -109,44 +120,6 @@ function loadUsers(id) {
         let _users = response;
         _users.forEach((user) => addUserToChannel(user));
     });
-}
-function removeUserFromList(login) {
-    if (users.length >= 0) {
-        var user = users.filter(e => e.login == login)[0];
-        user.element.Remove();
-        users = users.filter(u => u.login != u.login);
-    }
-}
-function getBadgeColor(amount) {
-    if (amount > 100)
-        return "badge-danger";
-    if (amount > 50)
-        return "badge-warning";
-    if (amount > 25)
-        return "badge-success";
-    return "badge-secondary";
-}
-function joinChannel(id) {
-    return __awaiter(this, void 0, void 0, function* () {
-        yield ajaxRequestParams("POST", "api/Channels/" + id + "/join", "", null).then((channelName) => {
-            feedList.html("");
-            loadChannels();
-            loadUsers(id);
-            currentChannelName = channelName;
-            addChatTab(channelName);
-            conversations[channelName] = new Conversation(currentChannelName, CONVERSATION_STATUS.ACCEPTED);
-        });
-    });
-}
-function generateRandomString(length) {
-    var text = "";
-    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    for (var i = 0; i < length; i++)
-        text += possible.charAt(Math.floor(Math.random() * possible.length));
-    return text;
-}
-function strip(s) {
-    return s.replace(/<(?:.|\n)*?>/gm, '');
 }
 function addUserToChannel(user) {
     try {
@@ -165,16 +138,33 @@ function addUserToChannel(user) {
         console.log(e);
     }
 }
-function addChatTab(login) {
-    let tab = new GUIChatTabElement(chatTabs, login);
-    let conversation = new Conversation(login, CONVERSATION_STATUS.PENDING);
-    conversations[login] = conversation;
-    tab.Render();
+function removeUserFromList(login) {
+    console.log("removing user from list " + login);
+    if (users.length >= 0) {
+        var user = users.filter(e => e.login == login)[0];
+        user.element.Remove();
+        console.log("found : " + user.login + " removing");
+        users = users.filter(u => u.login != u.login);
+    }
 }
-function loadConversation(login) {
-    let conversation = conversations[login];
-    feedList.html('');
-    feedList.append(conversation.get());
+function getBadgeColor(amount) {
+    if (amount > 100)
+        return "badge-danger";
+    if (amount > 50)
+        return "badge-warning";
+    if (amount > 25)
+        return "badge-success";
+    return "badge-secondary";
+}
+function generateRandomString(length) {
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    for (var i = 0; i < length; i++)
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+    return text;
+}
+function strip(s) {
+    return s.replace(/<(?:.|\n)*?>/gm, '');
 }
 
 "use strict";

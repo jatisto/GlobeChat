@@ -47,8 +47,8 @@ namespace GlobChat.api
             if (user.Channel != null) {
                  currentChannelName = user.Channel.ChannelName;
                  await _chatHubContext.Groups.RemoveFromGroupAsync(user.ConnectionId.connectionId, user.Channel.ChannelName);
-                 await _chatHubContext.Clients.Group(currentChannelName).SendAsync(USER_LEFT_CHANNEL, user.Login, currentChannelName);
-                await _chatHubContext.Clients.Group(newChannel.ChannelName).SendAsync(USER_JOINED_CHANNEL, user.ToJson());             
+                 await _chatHubContext.Clients.Group(currentChannelName).SendAsync(USER_LEFT_CHANNEL, user.ToJson());
+                 await _chatHubContext.Clients.Group(newChannel.ChannelName).SendAsync(USER_JOINED_CHANNEL, user.ToJson());             
             }                       
             await _chatHubContext.Groups.AddToGroupAsync(user.ConnectionId.connectionId, newChannel.ChannelName);
             user.Channel = newChannel;

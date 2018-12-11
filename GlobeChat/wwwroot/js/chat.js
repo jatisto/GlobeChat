@@ -7,7 +7,6 @@ var chatTabs = $(".chat-tabs");
 var userMessage = $(".message");
 var channels = new Array();
 var users = new Array();
-//var GUIUsers = new Array<GUIUserListElement>();
 var conversations = {};
 userMessage.keypress(function (e) {
     switch (e.key) {
@@ -28,6 +27,10 @@ const connection = new signalR.HubConnectionBuilder()
 function sendMessage(message) {
     console.log("Message sent : ");
     connection.send(NEW_MESSAGE, message);
+}
+function sendPrivateMessage(hash, message) {
+    console.log("Message sent : ");
+    connection.send(NEW_PRIVATE_MESSAGE, hash, message);
 }
 function sendInvitation(receiver) {
     console.log("Invitation sent to : " + receiver);
