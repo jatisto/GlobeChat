@@ -25,7 +25,9 @@ namespace GlobChat.Controllers
         // GET: Users
         public async Task<IActionResult> Index()
         {
-            return View(await _context.User.ToListAsync());
+            if(User.IsInRole("Admin"))
+                return View(await _context.User.ToListAsync());
+                else return Redirect(Url.Content("~/"));
         }
 
         // GET: Users
@@ -109,12 +111,15 @@ namespace GlobChat.Controllers
 
             var user = await _context.User
                 .FirstOrDefaultAsync(m => m.Id == id);
+
+
             if (user == null)
             {
                 return NotFound();
             }
-
-            return View(user);
+            if (user.Login == User.Identity.Name)
+                return View(user);
+            else return NotFound();
         }
 
         [Route("Users/Register")]
@@ -150,16 +155,17 @@ namespace GlobChat.Controllers
             }
             return View();
         }
-
-        // GET: Users/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        [HttpGet]
+        [Route("/Users/Edit/{login}")]
+        public async Task<IActionResult> Edit(string login)
         {
-            if (id == null)
+            var user = await _context.User.FirstOrDefaultAsync(u => u.Login == login);
+
+            if (User.Identity.Name != user.Login)
             {
                 return NotFound();
             }
-
-            var user = await _context.User.FindAsync(id);
+            
             if (user == null)
             {
                 return NotFound();
@@ -168,13 +174,13 @@ namespace GlobChat.Controllers
         }
 
         // POST: Users/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // To protect from overposting attacks, please enable the specif    ic properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Login,Email,Gender,DateOfBirth,Password")] User user)
         {
-            if (id != user.Id)
+            if (User.Identity.Name != user.Login)
             {
                 return NotFound();
             }
@@ -205,6 +211,7 @@ namespace GlobChat.Controllers
         // GET: Users/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
+            return NotFound(); //TEMPORARY
             if (id == null)
             {
                 return NotFound();
@@ -224,6 +231,7 @@ namespace GlobChat.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            return NotFound(); //TEMPORARY
             var user = await _context.User.FindAsync(id);
             var codes = await _context.ActivationCodes.FirstOrDefaultAsync(a => a.User.Id == id);
 

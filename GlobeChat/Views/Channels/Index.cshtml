@@ -1,23 +1,20 @@
 ﻿@model IEnumerable<GlobeChat.Models.Channel>
 
 @{
-    ViewData["Title"] = "Channels";    
+    ViewData["Title"] = "Channels";
 }
 <div class="container-fluid h-100" id="main-container">
     <div class="row justify-content-center h-100">
         <div class="col-3">
             <div class="card-header">
-                <div class="input-group">
-                    <label class="channel-label">Channels</label>
-                    <input type="text" placeholder="Search..." name="" class="form-control search">
+                <div class="input-group">                    
+                    <input type="text" placeholder="Find your channel..." name="" class="form-control search-channel">
                     <div class="input-group-prepend">
-                        <span class="input-group-text search_btn"><i class="fas fa-search"></i></span>
+                        <span class="input-group-text search_btn"><i class="fa fa-search"></i></span>
                     </div>
                 </div>
             </div>
-            <ul class="list-group channel-list">
-               
-            </ul>
+            <ul class="list-group channel-list"></ul>
         </div>
 
         <div class="col-6">
@@ -25,21 +22,21 @@
                 Message History
             </div>
             <div class="feed-container">
-              
+
             </div>
             <ul class="nav nav-tabs chat-tabs">
                 <li class="nav-item nav-link main-channel-tab">
-                    
-                </li>                
+
+                </li>
             </ul>
 
             <div class="input-group card-footer">
                 <div class="input-group-append">
-                    <span class="input-group-text attach_btn"><i class="fas fa-paperclip"></i></span>
+                    <span class="input-group-text attach_btn"><i class="fa fa-smile-o fa-3x"></i></span>
                 </div>
                 <textarea name="" class="form-control message" placeholder="Type your message..."></textarea>
                 <div class="input-group-append">
-                    <span class="input-group-text send_btn"><i class="fas fa-location-arrow"></i></span>
+                    <span class="input-group-text send_btn"><i class="fa fa-location-arrow fa-3x "></i></span>
                 </div>
             </div>
         </div>
@@ -48,10 +45,14 @@
             <div class="card-header">
                 Users in this channel
             </div>
+            <div class="input-group">
+                <input type="text" placeholder="Find user..." name="" class="form-control search-user">
+                <div class="input-group-prepend">
+                    <span class="input-group-text search_btn"><i class="fa fa-search"></i></span>
+                </div>
+            </div>
             <div class="user-container">
-                <ul class="list-group user-list">
-                   
-                </ul>
+                <ul class="list-group user-list"></ul>
             </div>
             <div class="card-footer rounded">
 
@@ -64,11 +65,14 @@
 @section Styles
     {
     <link rel="stylesheet" href="~/css/webchatview.css" />
+    <link rel="stylesheet" href="~/lib/animate.css/animate.css" />
+
     <link rel="stylesheet" href="~/lib//font-awesome/css/font-awesome.min.css" />
-    <link rel="stylesheet" href="~/lib/font-awesome/css/font-awesome.min.css" asp-append-version="true" />
+
 }
 @section Scripts
     {
+    <script src="~/lib/moment/min/moment-with-locales.min.js"></script>
     <script src="~/lib/signalr/dist/browser/signalr.min.js"></script>
     <script src="~/js/globals.js"></script>
     <script src="~/js/GUI/GUIRenderable.js"></script>
@@ -85,13 +89,13 @@
     <script src="~/js/chat.js"></script>
     <script src="~/js/connection.js"></script>
     <script>
-
+        
         $(document).ready(function () {
             $('#action_menu_btn').click(function () {
                 $('.action_menu').toggle();
-            });            
+            });
         });
-        
+
     </script>
 
 

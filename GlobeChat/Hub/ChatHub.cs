@@ -9,6 +9,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using static GlobeChat.Enums.Chat;
 using GlobeChat;
+using System.Linq;
 
 namespace SignalRWebPack.Hubs
 {
@@ -153,10 +154,12 @@ namespace SignalRWebPack.Hubs
                     {
                         var Channel = UserConnection.User.Channel;
                         var User = UserConnection.User;
+                        var conversations = _context.Conversations.Where(c => c.sender.Login == User.Login || c.receiver == c.receiver);
+                        await conversations.ForEachAsync(c => Clients.Group(c.hash).SendAsync(PRIVATE_MESSAGE_RECEIVED, c.hash, UserConnection.User.Login, " disconnected"));
                         await Clients.Group(Channel.ChannelName).SendAsync(USER_CONNECTION_TIMEOUT, UserConnection.User.Login, " disconnected", Channel.ChannelName);
                         Channel.Users.Remove(User);
                         User.Channel = null;
-
+                        _context.Conversations.RemoveRange(conversations);
                         await _context.SaveChangesAsync();
 
                     }

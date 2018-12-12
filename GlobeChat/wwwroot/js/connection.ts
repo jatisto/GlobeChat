@@ -35,7 +35,7 @@ connection.on(PRIVATE_MESSAGE_RECEIVED, (hash:string, login: string, message: st
     if (hash == activeConversation) addMessageToFeed(login, message);
     conversations[hash].add(new GUIChatFeedElement($(hash), login, message));
     if (activeConversation != hash) {
-        tabs[hash].addClass("glow-unread");
+        tabs[hash].addClass("pulse animate glow-unread");
     }
 });
 

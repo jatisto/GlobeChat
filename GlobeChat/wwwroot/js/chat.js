@@ -8,6 +8,8 @@ const chatTabs = $(".chat-tabs");
 const userMessage = $(".message");
 const feedTop = $(".feed-top");
 const feedContainer = $(".feed-container");
+const searchChannel = $(".search-channel");
+const userSearch = $(".search-user");
 var channels = new Array();
 var users = new Array();
 var conversations = {};
@@ -68,3 +70,25 @@ function endConversation(hash, login) {
     console.log("ending conversation : " + hash);
     connection.send(END_CONVERSATION, hash);
 }
+$(document).ready(function () {
+    searchChannel.keyup(function () {
+        var valThis = $(this).val();
+        valThis = valThis.toLowerCase();
+        console.log(valThis);
+        $('.channel-list>li').each(function () {
+            var text = strip($(this).text().toLowerCase());
+            text = text.trim();
+            (text.indexOf(valThis) == 0) ? $(this).show() : $(this).hide();
+        });
+    });
+    userSearch.keyup(function () {
+        var valThis = $(this).val();
+        valThis = valThis.toLowerCase();
+        console.log(valThis);
+        $('.user-list>li').each(function () {
+            var text = strip($(this).text().toLowerCase());
+            text = text.trim();
+            (text.indexOf(valThis) == 0) ? $(this).show() : $(this).hide();
+        });
+    });
+});

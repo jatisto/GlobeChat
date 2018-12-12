@@ -10,7 +10,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@types/jquery": "^3.3.22",
-    "@types/webix": "^5.1.1"
+    "@types/jquery": "^3.3.22"
   }
 }

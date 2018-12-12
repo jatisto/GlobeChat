@@ -18,9 +18,9 @@ namespace GlobChat.Controllers
         }
 
         // GET: Channels
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            return View(await _context.Channels.ToListAsync());
+            return View();
         }
 
         // GET: Channels/Details/5

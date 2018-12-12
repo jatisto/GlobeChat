@@ -2,7 +2,7 @@
     constructor(parent: JQuery<HTMLElement>, login: string, hash: string, Action: () => void, css?: string) {
         super(parent);
         this.name = name;
-        this.selector = $(`<li class="nav-item nav-link channel-tab"> ${login} </li>`);
+        this.selector = $(`<li class="nav-item nav-link channel-tab ${css}"> ${login} </li>`);
         this.selector.click(Action);        
 
         this.acceptButton = new GUIButton(this.selector, "", () => {
@@ -27,9 +27,10 @@
             delete conversations[hash];
             this.Remove();
         }, "conversation-close-button rounded-circle", "fa fa-close"); 
-
+       
         this.acceptButton.Render();
         this.rejectButton.Render();
+        
     }
     Render(): void {        
         this.parent.append(this.selector)        

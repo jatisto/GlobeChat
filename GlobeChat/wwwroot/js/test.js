@@ -8,6 +8,8 @@ const chatTabs = $(".chat-tabs");
 const userMessage = $(".message");
 const feedTop = $(".feed-top");
 const feedContainer = $(".feed-container");
+const searchChannel = $(".search-channel");
+const userSearch = $(".search-user");
 var channels = new Array();
 var users = new Array();
 var conversations = {};
@@ -68,6 +70,28 @@ function endConversation(hash, login) {
     console.log("ending conversation : " + hash);
     connection.send(END_CONVERSATION, hash);
 }
+$(document).ready(function () {
+    searchChannel.keyup(function () {
+        var valThis = $(this).val();
+        valThis = valThis.toLowerCase();
+        console.log(valThis);
+        $('.channel-list>li').each(function () {
+            var text = strip($(this).text().toLowerCase());
+            text = text.trim();
+            (text.indexOf(valThis) == 0) ? $(this).show() : $(this).hide();
+        });
+    });
+    userSearch.keyup(function () {
+        var valThis = $(this).val();
+        valThis = valThis.toLowerCase();
+        console.log(valThis);
+        $('.user-list>li').each(function () {
+            var text = strip($(this).text().toLowerCase());
+            text = text.trim();
+            (text.indexOf(valThis) == 0) ? $(this).show() : $(this).hide();
+        });
+    });
+});
 
 "use strict";
 var CONVERSATION_STATUS;
@@ -147,7 +171,7 @@ function loadChannels() {
         channelList.html('');
         channels.forEach((channel) => {
             channel.element = new GUIChannelListElement($(".channel-list"), channel);
-            let joinButton = new GUIButton(channel.element.selector, "Join", () => { joinChannel(channel.id); }, "btn btn-primary", "fa fa-sign-in");
+            let joinButton = new GUIButton(channel.element.selector, "Join", () => { joinChannel(channel.id); }, "btn join-button", "fa fa-sign-in");
             channel.element.Render();
             joinButton.Render();
             joinButton.selector.addClass("float-right");
@@ -160,6 +184,7 @@ function loadUsers(id) {
     resp.then(function (response) {
         userList.html('');
         let _users = response;
+        _users.sort(function (x, y) { return x.login == username ? -1 : y.login == username ? 1 : 0; });
         _users.forEach((user) => addUserToChannel(user));
     });
 }
@@ -167,7 +192,7 @@ function addUserToChannel(user) {
     try {
         console.log("adding user " + user.login);
         if (username != user.login) {
-            user.element = new GUIUserListElement($(".user-list"), user);
+            user.element = new GUIUserListElement(userList, user, "");
             let inviteButton = new GUIButton(user.element.selector, "", () => {
                 sendInvitation(user.login);
             }, "invite-btn float-right btn-success", "fa fa-comments");
@@ -231,7 +256,7 @@ function addConversation(login, hash) {
             pvt = true;
         }
         console.log("conversation " + hash + " tab clicked clicked");
-    });
+    }, "zoomIn animated");
     if (hash in conversations) {
         tab.rejectButton.Remove();
         tab.acceptButton.Remove();
