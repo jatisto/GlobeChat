@@ -7,18 +7,14 @@ class Conversation {
         this.status = CONVERSATION_STATUS.PENDING;
         this.selector = $(`<ul class="list-group feed-list"></ul>`);
     }
-    add(message) {
-        this.feed.push(message);
-    }
-    load() {
-        feedList.html('');
-        pvt = true;
-        activeConversation = this.hash;
-        this.feed.forEach(m => {
-            var el = $(`<li class="list-group-item">
-                            <span class="badge badge-secondary">${m.login}</span> <span>${m.message} </span>
+    add(element) {
+        var el = $(`<li class="list-group-item">
+                            <span class="badge badge-secondary">${element.login}</span> <span>${element.message} </span>
                         </li>`);
-            feedList.append(el);
-        });
+        this.selector.append(el);
+        this.feed.push(element);
+    }
+    get() {
+        return this.selector;
     }
 }

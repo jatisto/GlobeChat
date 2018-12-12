@@ -1,30 +1,33 @@
 ﻿class GUIChatTabElement extends GUIElement implements GUIRenderable {
-    constructor(parent: JQuery<HTMLElement>, login:string,  hash:string) {
+    constructor(parent: JQuery<HTMLElement>, login: string, hash: string, Action: () => void, css?: string) {
         super(parent);
         this.name = name;
         this.selector = $(`<li class="nav-item nav-link channel-tab"> ${login} </li>`);
+        this.selector.click(Action);        
 
-        this.selector.click(function () {
-            tabs[hash].removeClass("glow-unread");
-            if (conversations[hash].status == CONVERSATION_STATUS.ACCEPTED ||
-                conversations[hash].status == CONVERSATION_STATUS.REJECTED)
-                conversations[hash].load()
-        })
-        this.acceptButton = new GUIButton(this.selector, "Accept", () => {
+        this.acceptButton = new GUIButton(this.selector, "", () => {
             acceptInvitation(hash);
             this.closeButton.Render();
             this.acceptButton.Remove();
             this.rejectButton.Remove();
-        });       
-        this.rejectButton = new GUIButton(this.selector, "Reject", () => {
+        }, "conversation-accept-button rounded-circle", "fa fa-plus" );      
+        
+        this.rejectButton = new GUIButton(this.selector, "", () => {  
             rejectInvitation(hash);
             this.selector.remove();
-        });
-        this.closeButton = new GUIButton(this.selector, "X", () => {            
-            endConversation(hash, login);
+        }, "conversation-reject-button rounded-circle", "fa fa-close");
+
+        this.closeButton = new GUIButton(this.selector, "", () => {
+            if (activeConversation == hash) {
+                backButton.Hide();
+                pvt = false;
+                feedContainer.empty().append(conversations[currentChannelName].get());
+            }
+            endConversation(hash, login);            
             delete conversations[hash];
-            this.selector.remove();
-        });
+            this.Remove();
+        }, "conversation-close-button rounded-circle", "fa fa-close"); 
+
         this.acceptButton.Render();
         this.rejectButton.Render();
     }
@@ -35,10 +38,14 @@
     Remove(): void {
         this.selector.remove();
     }
+    Hide(): void {
+        this.selector.hide();
+        this.isVisible = false;
+    }
     name: string;
     isVisible: boolean = false;
     readonly isRenderable: boolean = true;
-
+   
     acceptButton: GUIButton;
     rejectButton: GUIButton;
     closeButton: GUIButton;

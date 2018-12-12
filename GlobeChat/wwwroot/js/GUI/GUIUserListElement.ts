@@ -1,5 +1,5 @@
 ﻿class GUIUserListElement extends GUIElement implements GUIRenderable {
-    constructor(parent: JQuery<HTMLElement>, User:User) {
+    constructor(parent: JQuery<HTMLElement>, User:User, css?:string) {
         super(parent);
         this.User = User;
         this.selector = $(`<li class="list-group-item">
@@ -7,7 +7,8 @@
                         ${this.User.login}
                         <span class="badge">
                             ${this.User.gender}, ${this.User.age}
-                        </span> </li>`);        
+                        </span> </li>`);
+        if (css != null) this.selector.addClass(css);
     }
     Render(): void {                
         this.parent.append(this.selector)
@@ -15,6 +16,10 @@
     }
     Remove(): void {
         this.selector.remove();
+    }
+    Hide(): void {
+        this.selector.hide();
+        this.isVisible = false;
     }
     User: User;
     isVisible: boolean = false;

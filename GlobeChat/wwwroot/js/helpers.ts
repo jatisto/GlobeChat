@@ -1,9 +1,10 @@
-﻿async function ajaxRequestParams(_type: string, _url: string, _params: string, _callback: null) {    
+﻿
+async function ajaxRequestParams(_type: string, _url: string, _params: string, _callback: null) {
     return new Promise<string>((resolve, reject) => {
         var request = $.ajax({
             type: _type,
             url: _url,
-            data: _params,            
+            data: _params,
         });
 
         request.done(function (res) {
@@ -16,30 +17,32 @@
     })
 }
 
-function addMessageToFeed(login: string, message: string) {
-    var el = new GUIChatFeedElement(feedList, login, message);
-}
 
+
+function addMessageToFeed(login: string, message: string) {
+    //conversations[currentChannelName].add(new GUIChatFeedElement($(login), login, message));  
+}
 async function joinChannel(id: number) {
-    await ajaxRequestParams("POST", "api/Channels/" + id + "/join", "", null).then((channelName) => {
-        feedList.html("");
+    await ajaxRequestParams("POST", "api/Channels/" + id + "/join", "", null).then((channelName) => {        
         loadChannels();
-        loadUsers(id);
-        conversations[channelName] = new Conversation(channelName);
+        loadUsers(id);  
         delete conversations[currentChannelName];
         currentChannelName = channelName;
+        feedContainer.empty();
+        conversations[channelName] = new Conversation(channelName);
+        feedContainer.append(conversations[currentChannelName].get());
     });
 }
 
-function loadChannels(): void {    
+function loadChannels(): void {
     var resp = ajaxRequestParams("POST", "api/getChannels", "", null);
-    resp.then(function (response) {      
+    resp.then(function (response) {
         channels = <Channel[]><unknown>response;
         channelList.html('');
         channels.forEach((channel) => {
             channel.element = new GUIChannelListElement($(".channel-list"), channel);
-            let joinButton = new GUIButton(channel.element.selector, "Join", () => { joinChannel(channel.id);  })   
-            channel.element.Render();                                 
+            let joinButton = new GUIButton(channel.element.selector, "Join", () => { joinChannel(channel.id); }, "btn btn-primary", "fa fa-sign-in")
+            channel.element.Render();
             joinButton.Render();
             joinButton.selector.addClass("float-right");
         });
@@ -48,7 +51,7 @@ function loadChannels(): void {
 
 function loadUsers(id: number): void {
     users = [];
-    var resp = ajaxRequestParams("POST", "api/Channels/"+id+"/users", "", null);
+    var resp = ajaxRequestParams("POST", "api/Channels/" + id + "/users", "", null);
     resp.then(function (response) {
         userList.html('');
         let _users = <User[]><unknown>response;
@@ -57,16 +60,32 @@ function loadUsers(id: number): void {
 }
 
 function addUserToChannel(user: User): void {
+   
     try {
-        user.element = new GUIUserListElement($(".user-list"), user);;
-        let inviteButton = new GUIButton(user.element.selector, "Invite", () => { sendInvitation(user.login) });
-        let blockButton = new GUIButton(user.element.selector, "Block", () => { });
-        inviteButton.selector.addClass("invite-btn float-right");
-        blockButton.selector.addClass("block-btn float-right");
-        user.element.Render();
-        blockButton.Render();
-        inviteButton.Render();
-        users.push(user);
+        console.log("adding user " + user.login);
+        
+        if (username != user.login) {
+            user.element = new GUIUserListElement($(".user-list"), user,);
+            let inviteButton = new GUIButton(user.element.selector, "", () => {
+                sendInvitation(user.login)
+            }, "invite-btn float-right btn-success", "fa fa-comments");
+
+            let blockButton = new GUIButton(user.element.selector, "", () => {
+            }, "invite-btn float-right btn-danger", "fa fa-close");
+
+            blockButton.Render();
+            inviteButton.Render();
+            users.push(user);
+        }
+        else {
+            user.element = new GUIUserListElement($(".user-list"), user, "current-user");
+            let settingsButton = new GUIButton(user.element.selector, "Settings", () => {
+               
+            }, "settings-btn float-right", "fa fa-cogs");
+            settingsButton.Render();
+        }
+        user.element.Render();     
+      
     }
     catch (e) {
         console.log(e);
@@ -76,22 +95,25 @@ function addUserToChannel(user: User): void {
 function removeUserFromList(login: string) {
     console.log("removing user from list " + login);
     if (users.length >= 0) {
-        var user = users.filter(e => e.login == login)[0];
-        user.element.Remove();
-        console.log("found : " + user.login + " removing")
-        users = users.filter(u => u.login != u.login);   
-    }    
+        try {
+            var user = users.filter(e => e.login == login)[0];
+            console.log("found : " + user.login + " removing")
+            user.element.Remove();
+            users = users.filter(u => u.login != u.login);
+        } catch (e) {
+            console.log(e);
+        }        
+    }
 }
 
-function getBadgeColor(amount: number) {    
+function getBadgeColor(amount: number) {
     if (amount > 100) return "badge-danger";
     if (amount > 50) return "badge-warning";
     if (amount > 25) return "badge-success";
     return "badge-secondary";
 }
 
-function generateRandomString(length:number):string
-{
+function generateRandomString(length: number): string {
     var text = "";
     var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     for (var i = 0; i < length; i++)
@@ -99,8 +121,19 @@ function generateRandomString(length:number):string
     return text;
 }
 
-function addConversation(login:string, hash:string) {
-    let tab = new GUIChatTabElement(chatTabs, login, hash)
+function addConversation(login: string, hash: string) {
+    let tab = new GUIChatTabElement(chatTabs, login, hash, () => {
+        if (conversations[hash].status == CONVERSATION_STATUS.ACCEPTED ||
+            conversations[hash].status == CONVERSATION_STATUS.REJECTED) {
+            activeConversation = hash;
+            feedContainer.empty().append(conversations[hash].get());
+            if (tabs[hash].hasClass("glow-unread"))
+                tabs[hash].removeClass("glow-unread");
+            backButton.selector.show();
+            pvt = true;
+        }            
+        console.log("conversation " + hash + " tab clicked clicked");
+    })
     if (hash in conversations) {
         tab.rejectButton.Remove();
         tab.acceptButton.Remove();
@@ -110,7 +143,7 @@ function addConversation(login:string, hash:string) {
     tabs[hash] = tab.selector;
 }
 
-function strip(s:string): string {
+function strip(s: string): string {
     return s.replace(/<(?:.|\n)*?>/gm, '');
 }
 

@@ -1,5 +1,5 @@
 enum CONVERSATION_STATUS {
-    PENDING, ACCEPTED, REJECTED, BLOCKED
+    PENDING, ACCEPTED, REJECTED, ENDED, BLOCKED
 }
 
 const USER_LEFT_CHANNEL: string = "userLeftChannel";
@@ -15,6 +15,7 @@ const REJECT_INVITATION: string = "rejectInvitation";
 const END_CONVERSATION: string = "endConversation";
 const INVITATION_ACCEPTED: string = "invitationAccepted";
 const INVITATION_REJECTED: string = "invitationRejected";
+const CONVERSATION_ENDED: string = "conversationEnded";
 const NEW_MESSAGE: string = "newMessage";
 const NEW_PRIVATE_MESSAGE: string = "newPrivateMessage";
 const MALE: string = "Male";

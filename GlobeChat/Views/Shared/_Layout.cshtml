@@ -19,6 +19,7 @@
         asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
         <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
     </environment>
+  
 </head>
 <body>
     <partial name="_UserInfoDebug" />
@@ -42,27 +43,26 @@
                     <li class="nav-item">
                         <a class="nav-link" href="/Users/Register">Register</a>
                     </li>
-                    
-                }    
+
+                }
                 @if (Context.User.Identity.IsAuthenticated == true)
                 {
                     <li class="nav-item">
                         <a class="nav-link" href="/Users/Logout">Log out</a>
                     </li>
-                    
                 }
             </ul>
         </div>
     </nav>
 
 
-    
-        @RenderBody()
-        <hr />
-        <footer>
-            <p>&copy; 2018 - GlobeChat</p>
-        </footer>
-   
+    @RenderBody()
+    <hr />
+    <footer>
+        <p>&copy; 2018 - GlobeChat</p>
+    </footer>
+
+
 
     <environment include="Development">
         <script src="~/lib/jquery/dist/jquery.js"></script>
@@ -86,5 +86,13 @@
     </environment>
 
     @RenderSection("Scripts", required: false)
+
+    @{
+        string username = Context.User.Identity.Name;
+    }
+    <script>
+      username = "@username";
+    </script>
+
 </body>
 </html>

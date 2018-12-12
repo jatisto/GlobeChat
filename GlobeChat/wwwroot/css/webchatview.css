@@ -14,13 +14,13 @@
     max-height:750px;
     overflow-y:auto;
 }
+.feed-container {
 
-.feed-list {
-    height:750px;
+    height: 750px;
     max-height: 750px;
     overflow-y: auto;
-}
 
+}
 .user-list {
     max-height: 750px;
     overflow-y: auto;
@@ -42,4 +42,16 @@
     to {
         box-shadow: 0 0 10px 10px #aef4af;
     }
+}
+
+.feed-container {
+    -webkit-box-shadow: 0px 0px 284px -19px rgba(0,0,0,0.08);
+    -moz-box-shadow: 0px 0px 284px -19px rgba(0,0,0,0.08);
+    box-shadow: 0px 0px 284px -19px rgba(0,0,0,0.08);
+}
+body {
+    
+}
+.current-user {
+    background-color:#f3f3f3;
 }

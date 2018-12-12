@@ -1,6 +1,6 @@
 "use strict";
 class GUIChatFeedElement extends GUIElement {
-    constructor(parent, login, message) {
+    constructor(parent, login, message, css) {
         super(parent);
         this.isRenderable = true;
         this.message = message;
@@ -15,5 +15,10 @@ class GUIChatFeedElement extends GUIElement {
         this.parent.append(element);
     }
     Remove() {
+        this.selector.remove();
+    }
+    Hide() {
+        this.selector.hide();
+        this.isVisible = false;
     }
 }

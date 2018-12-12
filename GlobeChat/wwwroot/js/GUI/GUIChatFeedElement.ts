@@ -1,5 +1,5 @@
 ﻿class GUIChatFeedElement extends GUIElement implements GUIRenderable {
-    constructor(parent: JQuery<HTMLElement>, login:string, message:string) {
+    constructor(parent: JQuery<HTMLElement>, login: string, message: string, css?: string) {
         super(parent);
         this.message = message;
         this.login = login;
@@ -12,7 +12,12 @@
                         </li>`);
         this.parent.append(element)
     }
-    Remove(): void {       
+    Remove(): void {     
+        this.selector.remove();
+    }
+    Hide(): void {
+        this.selector.hide();
+        this.isVisible = false;
     }
     login: string;
     message: string;

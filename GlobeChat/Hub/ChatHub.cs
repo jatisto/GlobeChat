@@ -59,7 +59,8 @@ namespace SignalRWebPack.Hubs
                     var ReceiverConnection = await _context.Connections.FirstOrDefaultAsync(c => c.User.Login == receiver);
                     var invExist = await _context.Conversations.FirstOrDefaultAsync(i => i.sender == SenderConnection.User && i.receiver == ReceiverConnection.User);
                
-                    if (invExist == null && (SenderConnection.connectionId != ReceiverConnection.connectionId))
+                    if (((invExist == null) || (invExist.Status==CONVERSATION_STATUS.ENDED))
+                        && (SenderConnection.connectionId != ReceiverConnection.connectionId))
                     {
                         var con = new Conversation(SenderConnection.User, ReceiverConnection.User, CONVERSATION_STATUS.PENDING);
                         await Clients.Client(ReceiverConnection.connectionId).SendAsync(INVITATION_RECEIVED, SenderConnection.User.Login, con.hash);
@@ -109,6 +110,26 @@ namespace SignalRWebPack.Hubs
                         await Clients.Client(receiver.ConnectionId.connectionId).SendAsync(INVITATION_REJECTED, hash, invitation.sender.Login);
                         await Clients.Client(invitation.sender.ConnectionId.connectionId).SendAsync(INVITATION_REJECTED, hash, receiver.Login);
                     }
+                    await _context.SaveChangesAsync();
+                }
+            }
+        }
+
+        public async Task EndConversation(string hash)
+        {
+            using (var serviceScope = m_ServiceProvider.CreateScope())
+            {
+                using (var _context = serviceScope.ServiceProvider.GetService<GlobeChatContext>())
+                {
+                    var connection = await _context.Connections.FirstOrDefaultAsync(c => c.connectionId == Context.ConnectionId);
+                    var receiver = await _context.User.FirstOrDefaultAsync(u => u.ConnectionId.connectionId == connection.connectionId);
+                    var conversation = await _context.Conversations.FirstOrDefaultAsync(c => c.hash == hash);                   
+                        conversation.Status = CONVERSATION_STATUS.ENDED;
+                        await Clients.Group(hash).SendAsync(CONVERSATION_ENDED, hash, connection.User.Login);
+                        await Groups.RemoveFromGroupAsync(conversation.sender.ConnectionId.connectionId, hash);
+                        await Groups.RemoveFromGroupAsync(conversation.receiver.ConnectionId.connectionId, hash);
+                        //await Clients.Client(receiver.ConnectionId.connectionId).SendAsync(CONVERSATION_ENDED, hash, conversation.sender.Login);
+                       // await Clients.Client(conversation.sender.ConnectionId.connectionId).SendAsync(CONVERSATION_ENDED, hash, receiver.Login);                        
                     await _context.SaveChangesAsync();
                 }
             }

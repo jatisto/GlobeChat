@@ -2,7 +2,7 @@
 
 namespace GlobeChat.Models
 {
-    public enum CONVERSATION_STATUS { PENDING, ACCEPTED, REJECTED, BLOCKED}
+    public  enum CONVERSATION_STATUS { PENDING, ACCEPTED, REJECTED, ENDED, BLOCKED}
     public class Conversation
     {
         public Conversation(User sender, User receiver, CONVERSATION_STATUS status)

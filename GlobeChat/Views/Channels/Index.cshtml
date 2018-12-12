@@ -1,13 +1,14 @@
 ﻿@model IEnumerable<GlobeChat.Models.Channel>
 
 @{
-    ViewData["Title"] = "Channels";
+    ViewData["Title"] = "Channels";    
 }
 <div class="container-fluid h-100" id="main-container">
     <div class="row justify-content-center h-100">
         <div class="col-3">
             <div class="card-header">
                 <div class="input-group">
+                    <label class="channel-label">Channels</label>
                     <input type="text" placeholder="Search..." name="" class="form-control search">
                     <div class="input-group-prepend">
                         <span class="input-group-text search_btn"><i class="fas fa-search"></i></span>
@@ -24,9 +25,7 @@
                 Message History
             </div>
             <div class="feed-container">
-                <ul class="list-group feed-list">
-                   
-                </ul>
+              
             </div>
             <ul class="nav nav-tabs chat-tabs">
                 <li class="nav-item nav-link main-channel-tab">
@@ -86,6 +85,7 @@
     <script src="~/js/chat.js"></script>
     <script src="~/js/connection.js"></script>
     <script>
+
         $(document).ready(function () {
             $('#action_menu_btn').click(function () {
                 $('.action_menu').toggle();

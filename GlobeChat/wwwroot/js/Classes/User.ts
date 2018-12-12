@@ -16,6 +16,10 @@
         this.element.Render();
     }
     Remove(): void {
-        this.element.Remove();
-    } 
+        this.element.selector.remove();
+    }
+    Hide(): void {
+        this.element.selector.hide();
+        this.isVisible = false;
+    }
 }

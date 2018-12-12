@@ -1,6 +1,6 @@
 "use strict";
 class GUIUserListElement extends GUIElement {
-    constructor(parent, User) {
+    constructor(parent, User, css) {
         super(parent);
         this.isVisible = false;
         this.isRenderable = true;
@@ -11,6 +11,8 @@ class GUIUserListElement extends GUIElement {
                         <span class="badge">
                             ${this.User.gender}, ${this.User.age}
                         </span> </li>`);
+        if (css != null)
+            this.selector.addClass(css);
     }
     Render() {
         this.parent.append(this.selector);
@@ -18,5 +20,9 @@ class GUIUserListElement extends GUIElement {
     }
     Remove() {
         this.selector.remove();
+    }
+    Hide() {
+        this.selector.hide();
+        this.isVisible = false;
     }
 }

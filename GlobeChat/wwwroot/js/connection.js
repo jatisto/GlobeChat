@@ -1,21 +1,23 @@
 "use strict";
 connection.on(CHANNEL_MESSAGE_RECEIVED, (login, message, channel) => {
-    conversations[channel].add(new GUIChatFeedElement($(channel), login, message));
-    addMessageToFeed(login, strip(message));
+    console.log("Channel message recived " + login + " " + message);
+    conversations[currentChannelName].add(new GUIChatFeedElement(feedList, login, strip(message)));
 });
 connection.on(USER_JOINED_CHANNEL, (user, newChannel, channel) => {
     user = JSON.parse(user);
+    console.log(user.login + " joined the channel");
     addUserToChannel(user);
-    addMessageToFeed("Info:", strip(user.login + " joined channel"));
+    conversations[currentChannelName].add(new GUIChatFeedElement(feedList, user.login, strip("joined the channel")));
 });
 connection.on(USER_CONNECTION_TIMEOUT, (login, message, channel) => {
     console.log("User timed out : " + login + " : " + message + channel);
-    addMessageToFeed(login, strip(message));
+    conversations[currentChannelName].add(new GUIChatFeedElement(feedList, login, strip(" timed out")));
     removeUserFromList(login);
 });
 connection.on(USER_LEFT_CHANNEL, (user, newChannel, channel) => {
     user = JSON.parse(user);
-    addMessageToFeed("Info:", strip(user.login + " left channel"));
+    console.log("User left the channel : " + user.login + " : " + channel);
+    conversations[currentChannelName].add(new GUIChatFeedElement(feedList, user.login, strip(" left the channel")));
     removeUserFromList(user.login);
 });
 connection.on(INVITATION_RECEIVED, (login, hash) => {
@@ -55,6 +57,18 @@ connection.on(INVITATION_REJECTED, (hash, login) => {
         addConversation(login, hash);
     }
     conversations[hash].add(new GUIChatFeedElement($(hash), "INFO", "User rejected your invitation"));
+});
+connection.on(CONVERSATION_ENDED, (hash, login) => {
+    console.log("User ended conversation " + hash);
+    if (hash in conversations) {
+        conversations[hash].add(new GUIChatFeedElement($(hash), "INFO", "User ended this conversation"));
+    }
+    else {
+        //conversations[hash] = new Conversation(hash);
+        //conversations[hash].status = CONVERSATION_STATUS.ENDED;
+        //addConversation(login, hash);
+        // conversations[hash].add(new GUIChatFeedElement($(hash), "INFO", "User ended this conversation"));   
+    }
 });
 connection.start()
     .catch(err => console.log(err))

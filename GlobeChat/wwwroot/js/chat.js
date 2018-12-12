@@ -1,22 +1,30 @@
 "use strict";
 var currentChannelName = "Global";
-var channelList = $(".channel-list");
-var userList = $(".user-list");
-var feedList = $(".feed-list");
-var chatTabs = $(".chat-tabs");
-var userMessage = $(".message");
-var feedTop = $(".feed-top");
+var username = "";
+const channelList = $(".channel-list");
+const userList = $(".user-list");
+const feedList = $(".feed-list");
+const chatTabs = $(".chat-tabs");
+const userMessage = $(".message");
+const feedTop = $(".feed-top");
+const feedContainer = $(".feed-container");
 var channels = new Array();
 var users = new Array();
-var pvt = false;
-var activeConversation = "";
 var conversations = {};
 var tabs = {};
-var backBurton = new GUIButton(feedTop, "Go back to channel", () => {
+var pvt = false;
+var activeConversation = "";
+feedTop.html('');
+var backButton = new GUIButton(feedTop, "", () => {
     pvt = false;
-    conversations[currentChannelName].load();
-});
-backBurton.Render();
+    feedContainer.html('');
+    feedContainer.append(conversations[currentChannelName].get());
+    activeConversation = currentChannelName;
+    console.log("back button clicked");
+    backButton.Hide();
+}, "btn-secondary rounded-circle", "fa fa-arrow-circle-left");
+backButton.Render();
+backButton.Hide();
 userMessage.keypress(function (e) {
     switch (e.key) {
         case "Enter":
@@ -58,5 +66,5 @@ function rejectInvitation(hash) {
 }
 function endConversation(hash, login) {
     console.log("ending conversation : " + hash);
-    connection.send(ACCEPT_INVITATION, hash);
+    connection.send(END_CONVERSATION, hash);
 }

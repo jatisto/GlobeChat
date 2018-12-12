@@ -11,6 +11,10 @@ class User {
         this.element.Render();
     }
     Remove() {
-        this.element.Remove();
+        this.element.selector.remove();
+    }
+    Hide() {
+        this.element.selector.hide();
+        this.isVisible = false;
     }
 }

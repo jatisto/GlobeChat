@@ -10,19 +10,14 @@
     status: CONVERSATION_STATUS;
     unreadmessages: number = 0;
     feed: GUIChatFeedElement[] = new Array();
-    add(message: GUIChatFeedElement) {
-        this.feed.push(message);
-        
-    }
-    public load() {
-        feedList.html('');
-        pvt = true;
-        activeConversation = this.hash;
-        this.feed.forEach(m => {
-            var el = $(`<li class="list-group-item">
-                            <span class="badge badge-secondary">${m.login}</span> <span>${m.message} </span>
+    add(element: GUIChatFeedElement) {
+        var el = $(`<li class="list-group-item">
+                            <span class="badge badge-secondary">${element.login}</span> <span>${element.message} </span>
                         </li>`);
-            feedList.append(el);
-        });
+        this.selector.append(el);
+        this.feed.push(element);
+    }
+    public get() :JQuery<HTMLElement> {   
+        return this.selector;
     }
 }

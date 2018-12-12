@@ -1,32 +1,32 @@
 "use strict";
 class GUIChatTabElement extends GUIElement {
-    constructor(parent, login, hash) {
+    constructor(parent, login, hash, Action, css) {
         super(parent);
         this.isVisible = false;
         this.isRenderable = true;
         this.name = name;
         this.selector = $(`<li class="nav-item nav-link channel-tab"> ${login} </li>`);
-        this.selector.click(function () {
-            tabs[hash].removeClass("glow-unread");
-            if (conversations[hash].status == CONVERSATION_STATUS.ACCEPTED ||
-                conversations[hash].status == CONVERSATION_STATUS.REJECTED)
-                conversations[hash].load();
-        });
-        this.acceptButton = new GUIButton(this.selector, "Accept", () => {
+        this.selector.click(Action);
+        this.acceptButton = new GUIButton(this.selector, "", () => {
             acceptInvitation(hash);
             this.closeButton.Render();
             this.acceptButton.Remove();
             this.rejectButton.Remove();
-        });
-        this.rejectButton = new GUIButton(this.selector, "Reject", () => {
+        }, "conversation-accept-button rounded-circle", "fa fa-plus");
+        this.rejectButton = new GUIButton(this.selector, "", () => {
             rejectInvitation(hash);
             this.selector.remove();
-        });
-        this.closeButton = new GUIButton(this.selector, "X", () => {
+        }, "conversation-reject-button rounded-circle", "fa fa-close");
+        this.closeButton = new GUIButton(this.selector, "", () => {
+            if (activeConversation == hash) {
+                backButton.Hide();
+                pvt = false;
+                feedContainer.empty().append(conversations[currentChannelName].get());
+            }
             endConversation(hash, login);
             delete conversations[hash];
-            this.selector.remove();
-        });
+            this.Remove();
+        }, "conversation-close-button rounded-circle", "fa fa-close");
         this.acceptButton.Render();
         this.rejectButton.Render();
     }
@@ -36,5 +36,9 @@ class GUIChatTabElement extends GUIElement {
     }
     Remove() {
         this.selector.remove();
+    }
+    Hide() {
+        this.selector.hide();
+        this.isVisible = false;
     }
 }
