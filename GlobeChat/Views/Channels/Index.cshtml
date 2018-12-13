@@ -61,12 +61,59 @@
         </div>
     </div>
 </div>
+<div class="overlay hide-overlay">
+
+</div>
+<div class="card user-settings-partial partial">
+    <div class=" card-header container-fluid">
+        <h1 class=""><i class="fa fa-cogs fa-1x"></i> Settings</h1>
+        <hr />
+        <div class="row">
+            <div class="col-2">
+                Avatar
+             </div>
+            <div class="col-5">
+                <img src="https://place-hold.it/300x300" class="settings-current-user-avatar" />
+            </div>
+            <div class="col-5">
+                <button class="user-settings-pick-image btn btn-info">
+                    <i class="fa fa-image fa-1x"></i>
+                    Change your Avatar
+                </button>
+            </div>
+        </div>
+        <hr />
+        <div class="row">
+            <div class="col-2">
+                Defult chat message 
+            </div>
+            <div class="col-5">
+                <input type="text" class="form-control" id="user-hello-message" aria-describedby="emailHelp" placeholder="Enter a message visible to everyone in your channel!">
+            </div>
+            <div class="col-5">
+                Enter your hello message
+            </div>
+        </div>
+
+        <div class="row card-footer">
+            <div class="col-6">
+
+            </div>
+            <div class="col-6">
+                <button class="hide-overlay user-settings-save btn btn-success">
+                    <i class="fa fa-save fa-1x"></i> Save Settings
+                </button>
+            </div>
+
+        </div>
+
+    </div>
+</div>
 
 @section Styles
     {
     <link rel="stylesheet" href="~/css/webchatview.css" />
     <link rel="stylesheet" href="~/lib/animate.css/animate.css" />
-
     <link rel="stylesheet" href="~/lib//font-awesome/css/font-awesome.min.css" />
 
 }
@@ -88,6 +135,7 @@
     <script src="~/js/helpers.js"></script>
     <script src="~/js/chat.js"></script>
     <script src="~/js/connection.js"></script>
+    <script src="~/js/partials.js"></script>
     <script>
         
         $(document).ready(function () {

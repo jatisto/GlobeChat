@@ -1,5 +1,4 @@
-﻿
-var currentChannelName = "Global";
+﻿var currentChannelName = "Global";
 var username = "";
 const channelList = $(".channel-list");
 const userList = $(".user-list");
@@ -10,6 +9,13 @@ const feedTop = $(".feed-top");
 const feedContainer = $(".feed-container");
 const searchChannel = $(".search-channel");
 const userSearch = $(".search-user");
+const userSettingsPartial = $(".user-settings-partial");
+const userSettingsSaveButton = $(".user-settings-save");
+const overlay = $(".overlay");
+const overlayHider = $(".hide-overlay");
+const partials = $(".partial");
+const action_interval = 100;
+var last_action = 0;
 
 var channels = new Array<Channel>();
 var users = new Array<User>();
@@ -27,6 +33,7 @@ var backButton = new GUIButton(feedTop, "", () => {
     console.log("back button clicked");
     backButton.Hide();
 }, "btn-secondary rounded-circle", "fa fa-arrow-circle-left");
+
 backButton.Render();
 backButton.Hide();
 
@@ -34,13 +41,14 @@ userMessage.keypress(function (e) {
     switch (e.key) {
         case "Enter": {
             if (!pvt) sendMessage(<string>userMessage.val());
-            else sendPrivateMessage(activeConversation, <string>userMessage.val());
+            else if (conversations[activeConversation].status != CONVERSATION_STATUS.ENDED)
+                sendPrivateMessage(activeConversation, <string>userMessage.val());
             userMessage.val(''); break
         };
     }
 });
 
-$('.body').fadeTo("slow", 0.8);
+//$('.body').fadeTo("slow", 0.8);
 const connection = new signalR.HubConnectionBuilder()
     .withUrl("/hub")
     .configureLogging(signalR.LogLevel.Information)    
@@ -53,7 +61,8 @@ function sendMessage(message: string) {
 
 function sendPrivateMessage(hash: string, message: string,) {
     console.log("Private Message sent : ");
-    connection.send(NEW_PRIVATE_MESSAGE, hash, message);
+    if (conversations[activeConversation].status != CONVERSATION_STATUS.ENDED)
+        connection.send(NEW_PRIVATE_MESSAGE, hash, message);
 }
 
 function sendInvitation(receiver: string) {
@@ -76,8 +85,7 @@ function endConversation(hash: string, login:string) {
     connection.send(END_CONVERSATION, hash);
 }
 
-$(document).ready(function () {
-    
+$(document).ready(function () {    
     searchChannel.keyup(function () {
         var valThis = <string>$(this).val();
         valThis = valThis.toLowerCase();
@@ -99,5 +107,10 @@ $(document).ready(function () {
             (text.indexOf(<string>valThis) == 0) ? $(this).show() : $(this).hide();
         });
     });
- 
 });
+
+overlayHider.click(() => {
+    overlay.fadeOut(100);
+    partials.hide();
+});
+userSettingsSaveButton.click(() => {  });

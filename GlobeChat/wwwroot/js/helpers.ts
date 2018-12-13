@@ -17,6 +17,10 @@ async function ajaxRequestParams(_type: string, _url: string, _params: string, _
     })
 }
 
+function loadPartial(partial: JQuery<HTMLElement>) {
+        overlay.show();
+        partial.addClass("fadeInDown animated").show();           
+}
 
 function addMessageToFeed(login: string, message: string) {
     //conversations[currentChannelName].add(new GUIChatFeedElement($(login), login, message));  
@@ -55,13 +59,11 @@ function loadUsers(id: number): void {
         userList.html('');
         let _users = <User[]><unknown>response;
         _users.sort(function (x: User, y: User) { return x.login == username ? -1 : y.login == username ? 1 : 0; });
-        _users.forEach((user) => addUserToChannel(user));
-       
+        _users.forEach((user) => addUserToChannel(user));       
     });
 }
 
-function addUserToChannel(user: User): void {
-   
+function addUserToChannel(user: User): void {   
     try {
         console.log("adding user " + user.login);        
         if (username != user.login) {
@@ -80,13 +82,11 @@ function addUserToChannel(user: User): void {
         else {
             user.element = new GUIUserListElement($(".user-list"), user, "current-user");
             let settingsButton = new GUIButton(user.element.selector, "Settings", () => {
-               
+                loadPartial(userSettingsPartial);
             }, "settings-btn float-right", "fa fa-cogs");
             settingsButton.Render();
-        }
-        
-        user.element.Render();     
-      
+        }        
+        user.element.Render();           
     }
     catch (e) {
         console.log(e);
@@ -134,7 +134,7 @@ function addConversation(login: string, hash: string) {
             pvt = true
         }            
         console.log("conversation " + hash + " tab clicked clicked");
-    },"zoomIn animated")
+    },"glow-unread")
     if (hash in conversations) {
         tab.rejectButton.Remove();
         tab.acceptButton.Remove();

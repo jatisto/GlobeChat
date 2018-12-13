@@ -34,6 +34,9 @@ namespace GlobeChat.Models
             modelBuilder.Entity<Conversation>()
                 .HasOne(u => u.receiver);
 
+            modelBuilder.Entity<Avatar>()
+               .HasOne(a => a.User);
+
         }
         public GlobeChatContext(DbContextOptions<GlobeChatContext> options)
             : base(options)

@@ -10,6 +10,13 @@ const feedTop = $(".feed-top");
 const feedContainer = $(".feed-container");
 const searchChannel = $(".search-channel");
 const userSearch = $(".search-user");
+const userSettingsPartial = $(".user-settings-partial");
+const userSettingsSaveButton = $(".user-settings-save");
+const overlay = $(".overlay");
+const overlayHider = $(".hide-overlay");
+const partials = $(".partial");
+const action_interval = 100;
+var last_action = 0;
 var channels = new Array();
 var users = new Array();
 var conversations = {};
@@ -33,7 +40,7 @@ userMessage.keypress(function (e) {
             {
                 if (!pvt)
                     sendMessage(userMessage.val());
-                else
+                else if (conversations[activeConversation].status != CONVERSATION_STATUS.ENDED)
                     sendPrivateMessage(activeConversation, userMessage.val());
                 userMessage.val('');
                 break;
@@ -41,7 +48,7 @@ userMessage.keypress(function (e) {
             ;
     }
 });
-$('.body').fadeTo("slow", 0.8);
+//$('.body').fadeTo("slow", 0.8);
 const connection = new signalR.HubConnectionBuilder()
     .withUrl("/hub")
     .configureLogging(signalR.LogLevel.Information)
@@ -52,7 +59,8 @@ function sendMessage(message) {
 }
 function sendPrivateMessage(hash, message) {
     console.log("Private Message sent : ");
-    connection.send(NEW_PRIVATE_MESSAGE, hash, message);
+    if (conversations[activeConversation].status != CONVERSATION_STATUS.ENDED)
+        connection.send(NEW_PRIVATE_MESSAGE, hash, message);
 }
 function sendInvitation(receiver) {
     console.log("Invitation sent to : " + receiver);
@@ -92,3 +100,8 @@ $(document).ready(function () {
         });
     });
 });
+overlayHider.click(() => {
+    overlay.fadeOut(100);
+    partials.hide();
+});
+userSettingsSaveButton.click(() => { });

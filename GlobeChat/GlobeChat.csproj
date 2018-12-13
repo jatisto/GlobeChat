@@ -5,6 +5,10 @@
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>
     <TypeScriptBuildMode>true</TypeScriptBuildMode>
+    <Authors>Paweł Potępa</Authors>
+    <NeutralLanguage>en</NeutralLanguage>
+    <Description>World Wide Chatting Platform !</Description>
+    <Copyright>Paweł Potępa 2018</Copyright>
   </PropertyGroup>
 
   <ItemGroup>
@@ -37,6 +41,7 @@
     <Content Remove="wwwroot\js\GUIRenderable.ts" />
     <Content Remove="wwwroot\js\GUI\GUIChatTabElement.ts" />
     <Content Remove="wwwroot\js\helpers.ts" />
+    <Content Remove="wwwroot\js\partials.ts" />
     <Content Remove="wwwroot\js\User.ts" />
   </ItemGroup>
 
@@ -59,15 +64,23 @@
     <TypeScriptCompile Include="wwwroot\js\Classes\Channel.ts" />
     <TypeScriptCompile Include="wwwroot\js\chat.ts" />
     <TypeScriptCompile Include="wwwroot\js\globals.ts" />
+    <TypeScriptCompile Include="wwwroot\js\partials.ts" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Update="Views\Channels\Index_bckp.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
+    <Content Update="Views\Shared\_ChatSettingsPartial.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\Shared\_UserInfoDebug.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\img\" />
   </ItemGroup>
 
 </Project>

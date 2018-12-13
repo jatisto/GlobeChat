@@ -24,6 +24,10 @@ function ajaxRequestParams(_type, _url, _params, _callback) {
         });
     });
 }
+function loadPartial(partial) {
+    overlay.show();
+    partial.addClass("fadeInDown animated").show();
+}
 function addMessageToFeed(login, message) {
     //conversations[currentChannelName].add(new GUIChatFeedElement($(login), login, message));  
 }
@@ -81,6 +85,7 @@ function addUserToChannel(user) {
         else {
             user.element = new GUIUserListElement($(".user-list"), user, "current-user");
             let settingsButton = new GUIButton(user.element.selector, "Settings", () => {
+                loadPartial(userSettingsPartial);
             }, "settings-btn float-right", "fa fa-cogs");
             settingsButton.Render();
         }
@@ -132,7 +137,7 @@ function addConversation(login, hash) {
             pvt = true;
         }
         console.log("conversation " + hash + " tab clicked clicked");
-    }, "zoomIn animated");
+    }, "glow-unread");
     if (hash in conversations) {
         tab.rejectButton.Remove();
         tab.acceptButton.Remove();

@@ -1,42 +1,54 @@
 ﻿
-connection.on(CHANNEL_MESSAGE_RECEIVED, (login: string, message: string, channel: string) => {  
-    console.log("Channel message recived " + login + " " + message )
-    conversations[currentChannelName].add(new GUIChatFeedElement(feedList, login, strip(message)));
+connection.on(CHANNEL_MESSAGE_RECEIVED, (login: string, message: string, channel: string) => {
+    
+        console.log("Channel message recived " + login + " " + message)
+        conversations[currentChannelName].add(new GUIChatFeedElement(feedList, login, strip(message)));
+      
 });
 
 connection.on(USER_JOINED_CHANNEL, (user: any, newChannel: any, channel: string) => {    
-    user = <User>JSON.parse(user);
-    console.log(<User>user.login + " joined the channel");
-    addUserToChannel(user);
-    conversations[currentChannelName].add(new GUIChatFeedElement(feedList, (<User>user).login, strip("joined the channel")));
+   
+        user = <User>JSON.parse(user);
+        console.log(<User>user.login + " joined the channel");
+        addUserToChannel(user);
+        conversations[currentChannelName].add(new GUIChatFeedElement(feedList, (<User>user).login, strip("joined the channel")));
+   
 });
 
-connection.on(USER_CONNECTION_TIMEOUT, (login: string, message: string, channel:string) => {
-    console.log("User timed out : " + login + " : " + message + channel)
-    conversations[currentChannelName].add(new GUIChatFeedElement(feedList, login, strip(" timed out")));
-    removeUserFromList(login);
+connection.on(USER_CONNECTION_TIMEOUT, (login: string, message: string, channel: string) => {
+    if (currentChannelName == channel) {
+        console.log("User timed out : " + login + " : " + message + channel)
+        conversations[currentChannelName].add(new GUIChatFeedElement(feedList, login, strip(" timed out")));
+        removeUserFromList(login);
+    }
 });
 
-connection.on(USER_LEFT_CHANNEL, (user: any, newChannel: any, channel: string) => {    
-    user = <User>JSON.parse(user);    
-    console.log("User left the channel : " + user.login + " : " + channel)
-    conversations[currentChannelName].add(new GUIChatFeedElement(feedList, user.login, strip(" left the channel")));
-    removeUserFromList(user.login);
+connection.on(USER_LEFT_CHANNEL, (user: any, newChannel: any, channel: string) => {
+    if (currentChannelName == channel) {
+        user = <User>JSON.parse(user);
+        console.log("User left the channel : " + user.login + " : " + channel)
+        conversations[currentChannelName].add(new GUIChatFeedElement(feedList, user.login, strip(" left the channel")));
+        removeUserFromList(user.login);
+    }   
 });
 
-connection.on(INVITATION_RECEIVED, (login: string, hash:string) => {    
-    console.log("received new invitation " + login + " " + hash);  
-    addConversation(login, hash);
-    conversations[hash] = new Conversation(hash)
+connection.on(INVITATION_RECEIVED, (login: string, hash: string) => {    
+    if ((hash in conversations) == false) {
+        console.log("received new invitation " + login + " " + hash);
+        addConversation(login, hash);
+        conversations[hash] = new Conversation(hash);
+    }   
 });
 
 connection.on(PRIVATE_MESSAGE_RECEIVED, (hash:string, login: string, message: string) => {
-    console.log("private message received " + hash + " " + login + " " + message);
-    if (hash == activeConversation) addMessageToFeed(login, message);
-    conversations[hash].add(new GUIChatFeedElement($(hash), login, message));
-    if (activeConversation != hash) {
-        tabs[hash].addClass("pulse animate glow-unread");
-    }
+    if (hash in conversations) {
+        console.log("private message received " + hash + " " + login + " " + message);
+        if (hash == activeConversation) addMessageToFeed(login, message);
+        conversations[hash].add(new GUIChatFeedElement($(hash), login, message));
+        if (activeConversation != hash) {
+            tabs[hash].addClass("pulse animate glow-unread");
+        }
+    } 
 });
 
 connection.on(INVITATION_ACCEPTED, (hash:string, login:string) => {
@@ -71,9 +83,8 @@ connection.on(CONVERSATION_ENDED, (hash: string, login: string) => {
         //conversations[hash] = new Conversation(hash);
         //conversations[hash].status = CONVERSATION_STATUS.ENDED;
         //addConversation(login, hash);
-       // conversations[hash].add(new GUIChatFeedElement($(hash), "INFO", "User ended this conversation"));   
-    }
-   
+        //conversations[hash].add(new GUIChatFeedElement($(hash), "INFO", "User ended this conversation"));   
+    }   
 });
 
 connection.start()
@@ -83,5 +94,6 @@ connection.start()
     }).then(() => {
         joinChannel(GLOBAL_CHANNEL);
     });
+
 
 

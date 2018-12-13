@@ -1,6 +1,4 @@
-﻿
-
-body {
+﻿body {
     
 }
 
@@ -69,29 +67,31 @@ body {
         display: flex;
         padding: 5px;
         border: none;
-        background-color: rgba(255, 225, 173, 0.49);
+        //background-color: rgba(255, 225, 173, 0.49);
         width: 100%;
         float: left;
-        -webkit-box-shadow: 0px 0px 25px 0px rgba(0,0,0,0.05);
-        -moz-box-shadow: 0px 0px 25px 0px rgba(0,0,0,0.05);
-        box-shadow: 0px 0px 25px 0px rgba(0,0,0,0.05);
+        background-color:aliceblue;
+        -webkit-border-radius: 10px;
+        -moz-border-radius: 10px;
+        border-radius: 10px;
     }
 
 .feed-user-message > .message-text {
     display: flex;
     padding: 5px;
     border: none;
-    background-color: rgba(174, 244, 175, 0.49);
+    //background-color: rgba(174, 244, 175, 0.49);
     width: 100%;
     float: left;
-    -webkit-box-shadow: 0px 0px 25px 0px rgba(0,0,0,0.05);
-    -moz-box-shadow: 0px 0px 25px 0px rgba(0,0,0,0.05);
-    box-shadow: 0px 0px 25px 0px rgba(0,0,0,0.05);
+    background-color:antiquewhite;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
 }
 
 .feed-top {
     
-    min-height: 75px;
+    min-height: 75px; 
 }
 .feed-list {
     background-color:rgba(255, 255, 255, 0.19)
@@ -102,4 +102,50 @@ body {
 }
 
 .user-item, .channel-item :hover {
+}
+
+.female-pink {
+    color:#efadff;
+}
+.male-blue {
+    color: #86d3ff;
+}
+
+.user-settings-partial {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 5; /* Sit on top */
+    left: 25%;
+    top: 25%;
+    width: 50%; /* Full width */
+    height: auto; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgba(0, 0, 0, 0.00); /* Fallback color */
+    background-color: rgba(0, 0, 0, 0.00); /* Black w/ opacity */
+    background-color: aliceblue;
+    border-radius: 10px;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+}
+.overlay {
+
+    position: fixed; 
+    display: none; 
+    width: 100%; 
+    height: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0,0,0,0.5); 
+    z-index: 2; 
+    cursor: pointer; 
+}
+.user-details-badge {
+    display: inline-block;
+    margin: auto;    
+    padding: 10px;
+}
+.user-settings-save {
+    float:right;
 }
