@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using GlobeChat.Models;
 namespace GlobeChat.Models
 {
     public class GlobeChatContext : DbContext
@@ -48,6 +49,7 @@ namespace GlobeChat.Models
         public DbSet<GlobeChat.Models.Channel> Channels { get; set; }
         public DbSet<GlobeChat.Models.Connection> Connections { get; set; }
         public DbSet<GlobeChat.Models.Conversation> Conversations { get; set; }
+        public DbSet<GlobeChat.Models.Avatar> Avatar { get; set; }
 
 
     }

@@ -5,7 +5,6 @@ connection.on(CHANNEL_MESSAGE_RECEIVED, (login, message, channel) => {
 });
 connection.on(USER_JOINED_CHANNEL, (user, newChannel, channel) => {
     user = JSON.parse(user);
-    console.log(user.login + " joined the channel");
     addUserToChannel(user);
     conversations[currentChannelName].add(new GUIChatFeedElement(feedList, user.login, strip("joined the channel")));
 });
@@ -16,7 +15,7 @@ connection.on(USER_CONNECTION_TIMEOUT, (login, message, channel) => {
         removeUserFromList(login);
     }
 });
-connection.on(USER_LEFT_CHANNEL, (user, newChannel, channel) => {
+connection.on(USER_LEFT_CHANNEL, (user, channel) => {
     if (currentChannelName == channel) {
         user = JSON.parse(user);
         console.log("User left the channel : " + user.login + " : " + channel);
@@ -34,8 +33,6 @@ connection.on(INVITATION_RECEIVED, (login, hash) => {
 connection.on(PRIVATE_MESSAGE_RECEIVED, (hash, login, message) => {
     if (hash in conversations) {
         console.log("private message received " + hash + " " + login + " " + message);
-        if (hash == activeConversation)
-            addMessageToFeed(login, message);
         conversations[hash].add(new GUIChatFeedElement($(hash), login, message));
         if (activeConversation != hash) {
             tabs[hash].addClass("pulse animate glow-unread");
@@ -83,5 +80,5 @@ connection.start()
     .then(() => {
     console.log(connection.keepAliveIntervalInMilliseconds);
 }).then(() => {
-    joinChannel(GLOBAL_CHANNEL);
+    joinChannel("Global");
 });

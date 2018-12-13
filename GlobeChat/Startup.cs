@@ -86,6 +86,7 @@ namespace GlobeChat
             app.UseDefaultFiles();
             app.UseCookiePolicy();
             app.UseStaticFiles();
+            
 
 
 
@@ -97,7 +98,10 @@ namespace GlobeChat
                 routes.MapRoute(
                  name: "default",
                  template: "{controller=Home}/{action=Index}/{id?}");
+
             });
+
+
         }
     }
 }

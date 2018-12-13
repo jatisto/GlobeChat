@@ -1,6 +1,10 @@
 "use strict";
-var currentChannelName = "Global";
 var username = "";
+var gender = "";
+var avatar = "";
+var userUploadAvatar;
+var activeConversation = "";
+var currentChannelName = "Global";
 const channelList = $(".channel-list");
 const userList = $(".user-list");
 const feedList = $(".feed-list");
@@ -10,11 +14,15 @@ const feedTop = $(".feed-top");
 const feedContainer = $(".feed-container");
 const searchChannel = $(".search-channel");
 const userSearch = $(".search-user");
-const userSettingsPartial = $(".user-settings-partial");
+const userSettingsModal = $(".user-settings-modal");
 const userSettingsSaveButton = $(".user-settings-save");
+const imageUploader = $("#imageUploader");
+const userSettingsCurrentAvatar = $(".user-settings-current-avatar");
 const overlay = $(".overlay");
 const overlayHider = $(".hide-overlay");
-const partials = $(".partial");
+const modals = $(".chatmodal");
+const backButtonDiv = $(".back-button-div");
+const maxAvatarSize = 1024 * 100;
 const action_interval = 100;
 var last_action = 0;
 var channels = new Array();
@@ -22,9 +30,8 @@ var users = new Array();
 var conversations = {};
 var tabs = {};
 var pvt = false;
-var activeConversation = "";
-feedTop.html('');
-var backButton = new GUIButton(feedTop, "", () => {
+feedTop.html(currentChannelName);
+var backButton = new GUIButton(backButtonDiv, "", () => {
     pvt = false;
     feedContainer.html('');
     feedContainer.append(conversations[currentChannelName].get());
@@ -102,6 +109,25 @@ $(document).ready(function () {
 });
 overlayHider.click(() => {
     overlay.fadeOut(100);
-    partials.hide();
+    modals.hide();
 });
 userSettingsSaveButton.click(() => { });
+$(imageUploader).change(function () {
+    readImage(this);
+});
+function readImage(input) {
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function (e) {
+            var result = e.target.result;
+            if (result.length < maxAvatarSize) {
+                userSettingsCurrentAvatar.attr('src', e.target.result);
+                userUploadAvatar = e.target.result;
+            }
+            else {
+                alert("Image is too big");
+            }
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}

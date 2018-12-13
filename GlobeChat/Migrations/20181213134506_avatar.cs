@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace GlobeChat.Migrations
 {
-    public partial class Initial : Migration
+    public partial class avatar : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -91,6 +91,26 @@ namespace GlobeChat.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Avatar",
+                columns: table => new
+                {
+                    id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    UserId = table.Column<int>(nullable: true),
+                    image = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Avatar", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_Avatar_User_UserId",
+                        column: x => x.UserId,
+                        principalTable: "User",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Connections",
                 columns: table => new
                 {
@@ -110,26 +130,27 @@ namespace GlobeChat.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Invitations",
+                name: "Conversations",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    hash = table.Column<string>(nullable: true),
                     senderId = table.Column<int>(nullable: true),
                     receiverId = table.Column<int>(nullable: true),
                     Status = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Invitations", x => x.Id);
+                    table.PrimaryKey("PK_Conversations", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Invitations_User_receiverId",
+                        name: "FK_Conversations_User_receiverId",
                         column: x => x.receiverId,
                         principalTable: "User",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Invitations_User_senderId",
+                        name: "FK_Conversations_User_senderId",
                         column: x => x.senderId,
                         principalTable: "User",
                         principalColumn: "Id",
@@ -142,19 +163,24 @@ namespace GlobeChat.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Avatar_UserId",
+                table: "Avatar",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Connections_id",
                 table: "Connections",
                 column: "id",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Invitations_receiverId",
-                table: "Invitations",
+                name: "IX_Conversations_receiverId",
+                table: "Conversations",
                 column: "receiverId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Invitations_senderId",
-                table: "Invitations",
+                name: "IX_Conversations_senderId",
+                table: "Conversations",
                 column: "senderId");
 
             migrationBuilder.CreateIndex(
@@ -174,13 +200,16 @@ namespace GlobeChat.Migrations
                 name: "ActivationCodes");
 
             migrationBuilder.DropTable(
+                name: "Avatar");
+
+            migrationBuilder.DropTable(
                 name: "Connections");
 
             migrationBuilder.DropTable(
-                name: "DbLog");
+                name: "Conversations");
 
             migrationBuilder.DropTable(
-                name: "Invitations");
+                name: "DbLog");
 
             migrationBuilder.DropTable(
                 name: "User");

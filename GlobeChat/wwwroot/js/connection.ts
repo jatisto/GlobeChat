@@ -6,13 +6,11 @@ connection.on(CHANNEL_MESSAGE_RECEIVED, (login: string, message: string, channel
       
 });
 
-connection.on(USER_JOINED_CHANNEL, (user: any, newChannel: any, channel: string) => {    
-   
+connection.on(USER_JOINED_CHANNEL, (user: any, newChannel: any, channel: string) => {       
         user = <User>JSON.parse(user);
-        console.log(<User>user.login + " joined the channel");
         addUserToChannel(user);
-        conversations[currentChannelName].add(new GUIChatFeedElement(feedList, (<User>user).login, strip("joined the channel")));
-   
+        conversations[currentChannelName].add(new GUIChatFeedElement(feedList, (<User>user).login, strip("joined the channel")));   
+      
 });
 
 connection.on(USER_CONNECTION_TIMEOUT, (login: string, message: string, channel: string) => {
@@ -23,7 +21,7 @@ connection.on(USER_CONNECTION_TIMEOUT, (login: string, message: string, channel:
     }
 });
 
-connection.on(USER_LEFT_CHANNEL, (user: any, newChannel: any, channel: string) => {
+connection.on(USER_LEFT_CHANNEL, (user: any,  channel: string) => {
     if (currentChannelName == channel) {
         user = <User>JSON.parse(user);
         console.log("User left the channel : " + user.login + " : " + channel)
@@ -42,8 +40,7 @@ connection.on(INVITATION_RECEIVED, (login: string, hash: string) => {
 
 connection.on(PRIVATE_MESSAGE_RECEIVED, (hash:string, login: string, message: string) => {
     if (hash in conversations) {
-        console.log("private message received " + hash + " " + login + " " + message);
-        if (hash == activeConversation) addMessageToFeed(login, message);
+        console.log("private message received " + hash + " " + login + " " + message);       
         conversations[hash].add(new GUIChatFeedElement($(hash), login, message));
         if (activeConversation != hash) {
             tabs[hash].addClass("pulse animate glow-unread");
@@ -92,7 +89,7 @@ connection.start()
     .then(() => {
         console.log(connection.keepAliveIntervalInMilliseconds);
     }).then(() => {
-        joinChannel(GLOBAL_CHANNEL);
+        joinChannel("Global");
     });
 
 

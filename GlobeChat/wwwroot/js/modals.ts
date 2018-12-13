@@ -1,0 +1,1 @@
+﻿userSettingsSaveButton.click(() => { userSettingsModal.hide(); });

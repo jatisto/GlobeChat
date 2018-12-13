@@ -1,1 +1,0 @@
-﻿userSettingsSaveButton.click(() => { userSettingsPartial.hide(); });

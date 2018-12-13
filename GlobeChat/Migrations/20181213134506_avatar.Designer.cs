@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GlobeChat.Migrations
 {
     [DbContext(typeof(GlobeChatContext))]
-    [Migration("20181210143053_Initial")]
-    partial class Initial
+    [Migration("20181213134506_avatar")]
+    partial class avatar
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -37,6 +37,23 @@ namespace GlobeChat.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("ActivationCodes");
+                });
+
+            modelBuilder.Entity("GlobeChat.Models.Avatar", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int?>("UserId");
+
+                    b.Property<string>("image");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Avatar");
                 });
 
             modelBuilder.Entity("GlobeChat.Models.Channel", b =>
@@ -71,26 +88,15 @@ namespace GlobeChat.Migrations
                     b.ToTable("Connections");
                 });
 
-            modelBuilder.Entity("GlobeChat.Models.DbLog", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Message");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("DbLog");
-                });
-
-            modelBuilder.Entity("GlobeChat.Models.Invitation", b =>
+            modelBuilder.Entity("GlobeChat.Models.Conversation", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<int>("Status");
+
+                    b.Property<string>("hash");
 
                     b.Property<int?>("receiverId");
 
@@ -102,7 +108,20 @@ namespace GlobeChat.Migrations
 
                     b.HasIndex("senderId");
 
-                    b.ToTable("Invitations");
+                    b.ToTable("Conversations");
+                });
+
+            modelBuilder.Entity("GlobeChat.Models.DbLog", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Message");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("DbLog");
                 });
 
             modelBuilder.Entity("GlobeChat.Models.User", b =>
@@ -153,6 +172,13 @@ namespace GlobeChat.Migrations
                         .HasForeignKey("UserId");
                 });
 
+            modelBuilder.Entity("GlobeChat.Models.Avatar", b =>
+                {
+                    b.HasOne("GlobeChat.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+                });
+
             modelBuilder.Entity("GlobeChat.Models.Connection", b =>
                 {
                     b.HasOne("GlobeChat.Models.User", "User")
@@ -161,7 +187,7 @@ namespace GlobeChat.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("GlobeChat.Models.Invitation", b =>
+            modelBuilder.Entity("GlobeChat.Models.Conversation", b =>
                 {
                     b.HasOne("GlobeChat.Models.User", "receiver")
                         .WithMany()

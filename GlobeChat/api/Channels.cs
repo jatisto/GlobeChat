@@ -36,18 +36,18 @@ namespace GlobChat.api
             _chatHubContext = hubContext;
         }
 
-        [Route("{id}/join")]
+      
         [HttpPost]
-        public async Task<string> JoinChannelAsync([FromRoute] int Id, string Login)
-        {
-            
-            var newChannel = _context.Channels.Where(c => c.Id == Id).Single();
+        [Route("/api/Channels/{channelName}/join")]
+        public async Task<string> JoinChannelAsync([FromRoute] string channelName, string Login)
+        {            
+            var newChannel = _context.Channels.Where(c => c.ChannelName == channelName).Single();
             var user = await _context.User.FirstOrDefaultAsync(u => u.Login == HttpContext.User.Identity.Name);
             string currentChannelName = "";       
             if (user.Channel != null) {
                  currentChannelName = user.Channel.ChannelName;
                  await _chatHubContext.Groups.RemoveFromGroupAsync(user.ConnectionId.connectionId, user.Channel.ChannelName);
-                 await _chatHubContext.Clients.Group(currentChannelName).SendAsync(USER_LEFT_CHANNEL, user.ToJson());
+                 await _chatHubContext.Clients.Group(currentChannelName).SendAsync(USER_LEFT_CHANNEL, user.ToJson(), currentChannelName);
                  await _chatHubContext.Clients.Group(newChannel.ChannelName).SendAsync(USER_JOINED_CHANNEL, user.ToJson());             
             }                       
             await _chatHubContext.Groups.AddToGroupAsync(user.ConnectionId.connectionId, newChannel.ChannelName);
@@ -64,7 +64,9 @@ namespace GlobChat.api
             var Few = from c in _context.Channels
                       select new
                       {
+#pragma warning disable IDE0037 // Use inferred member name
                           ChannelName = c.ChannelName,
+
                           UserCount = c.Users.Count,
                           CSSclass = Helpers.RateUserCount(c.Users.Count),
                           Id = c.Id
@@ -72,16 +74,12 @@ namespace GlobChat.api
             return await Few.OrderByDescending(c => c.UserCount).ToListAsync();
         }
         [HttpGet]
-        [Route("{id}/feed")]
-        public void GetFeed()
-        {
-        }
 
         [HttpPost]
-        [Route("{id}/users")]
-        public async Task<dynamic> GetUsers([FromRoute] int id)
+        [Route("{channelName}/users")]
+        public async Task<dynamic> GetUsers([FromRoute] string channelName)
         {
-            var Channel = await _context.Channels.FirstOrDefaultAsync(c => c.Id == id);
+            var Channel = await _context.Channels.FirstOrDefaultAsync(c => c.ChannelName == channelName);
             var Users = Channel.Users;
             var Few = from u in Users
                       select new

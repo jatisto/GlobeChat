@@ -28,16 +28,14 @@ function loadPartial(partial) {
     overlay.show();
     partial.addClass("fadeInDown animated").show();
 }
-function addMessageToFeed(login, message) {
-    //conversations[currentChannelName].add(new GUIChatFeedElement($(login), login, message));  
-}
-function joinChannel(id) {
+function joinChannel(channelName) {
     return __awaiter(this, void 0, void 0, function* () {
-        yield ajaxRequestParams("POST", "api/Channels/" + id + "/join", "", null).then((channelName) => {
+        yield ajaxRequestParams("POST", "api/Channels/" + channelName + "/join", "", null).then((channelName) => {
             loadChannels();
-            loadUsers(id);
+            loadUsers(channelName);
             delete conversations[currentChannelName];
             currentChannelName = channelName;
+            feedTop.html(channelName);
             feedContainer.empty();
             conversations[channelName] = new Conversation(channelName);
             feedContainer.append(conversations[currentChannelName].get());
@@ -51,20 +49,24 @@ function loadChannels() {
         channelList.html('');
         channels.forEach((channel) => {
             channel.element = new GUIChannelListElement($(".channel-list"), channel);
-            let joinButton = new GUIButton(channel.element.selector, "Join", () => { joinChannel(channel.id); }, "btn join-button", "fa fa-sign-in");
+            let joinButton = new GUIButton(channel.element.selector, "Join", () => {
+                joinChannel(channel.channelName);
+            }, "btn join-button", "fa fa-sign-in");
             channel.element.Render();
             joinButton.Render();
             joinButton.selector.addClass("float-right");
         });
     });
 }
-function loadUsers(id) {
+function loadUsers(channelName) {
     users = [];
-    var resp = ajaxRequestParams("POST", "api/Channels/" + id + "/users", "", null);
+    var resp = ajaxRequestParams("POST", "api/Channels/" + channelName + "/users", "", null);
     resp.then(function (response) {
         userList.html('');
         let _users = response;
-        _users.sort(function (x, y) { return x.login == username ? -1 : y.login == username ? 1 : 0; });
+        _users.sort(function (x, y) {
+            return x.login == username ? -1 : y.login == username ? 1 : 0;
+        });
         _users.forEach((user) => addUserToChannel(user));
     });
 }
@@ -85,7 +87,7 @@ function addUserToChannel(user) {
         else {
             user.element = new GUIUserListElement($(".user-list"), user, "current-user");
             let settingsButton = new GUIButton(user.element.selector, "Settings", () => {
-                loadPartial(userSettingsPartial);
+                loadPartial(userSettingsModal);
             }, "settings-btn float-right", "fa fa-cogs");
             settingsButton.Render();
         }
@@ -129,12 +131,13 @@ function addConversation(login, hash) {
     let tab = new GUIChatTabElement(chatTabs, login, hash, () => {
         if (conversations[hash].status == CONVERSATION_STATUS.ACCEPTED ||
             conversations[hash].status == CONVERSATION_STATUS.REJECTED) {
-            activeConversation = hash;
             feedContainer.empty().append(conversations[hash].get());
             if (tabs[hash].hasClass("glow-unread"))
                 tabs[hash].removeClass("glow-unread");
             backButton.selector.show();
+            activeConversation = hash;
             pvt = true;
+            feedTop.text("Conversation with " + login);
         }
         console.log("conversation " + hash + " tab clicked clicked");
     }, "glow-unread");

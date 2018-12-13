@@ -2,7 +2,6 @@
     
 }
 
-
 #main-container {
     margin-top:15px;
 }
@@ -89,8 +88,7 @@
     border-radius: 10px;
 }
 
-.feed-top {
-    
+.feed-top {    
     min-height: 75px; 
 }
 .feed-list {
@@ -98,10 +96,18 @@
 }
 
 .user-item > button {
-    margin:5px;
+    margin:5px;    
 }
 
-.user-item, .channel-item :hover {
+.user-item:hover {
+    background-color:aliceblue;
+    opacity: 1;
+    transition: 0.5s;
+}
+.channel-list-item:hover {
+    background-color: aliceblue;
+    opacity: 1;
+    transition: 0.5s;
 }
 
 .female-pink {
@@ -111,14 +117,12 @@
     color: #86d3ff;
 }
 
-.user-settings-partial {
-    display: none; /* Hidden by default */
-    position: fixed; /* Stay in place */
-    z-index: 5; /* Sit on top */
-    left: 25%;
-    top: 25%;
-    width: 50%; /* Full width */
-    height: auto; /* Full height */
+.user-settings-modal {
+    position: fixed;
+    top: 10%;
+    left: 40%;
+    
+    display: none;
     overflow: auto; /* Enable scroll if needed */
     background-color: rgba(0, 0, 0, 0.00); /* Fallback color */
     background-color: rgba(0, 0, 0, 0.00); /* Black w/ opacity */
@@ -126,20 +130,8 @@
     border-radius: 10px;
     -moz-border-radius: 10px;
     -webkit-border-radius: 10px;
-}
-.overlay {
-
-    position: fixed; 
-    display: none; 
-    width: 100%; 
-    height: 100%;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0,0,0,0.5); 
-    z-index: 2; 
-    cursor: pointer; 
+    z-index: 5;
+    transform: translateX(-50%) translateY(-50%);
 }
 .user-details-badge {
     display: inline-block;
@@ -148,4 +140,11 @@
 }
 .user-settings-save {
     float:right;
+}
+.user-settings-pick-image {
+   
+}
+.user-settings-current-avatar {
+ max-height:400px;
+ max-width:300px;
 }

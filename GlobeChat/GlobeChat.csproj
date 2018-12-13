@@ -41,7 +41,7 @@
     <Content Remove="wwwroot\js\GUIRenderable.ts" />
     <Content Remove="wwwroot\js\GUI\GUIChatTabElement.ts" />
     <Content Remove="wwwroot\js\helpers.ts" />
-    <Content Remove="wwwroot\js\partials.ts" />
+    <Content Remove="wwwroot\js\modals.ts" />
     <Content Remove="wwwroot\js\User.ts" />
   </ItemGroup>
 
@@ -64,7 +64,7 @@
     <TypeScriptCompile Include="wwwroot\js\Classes\Channel.ts" />
     <TypeScriptCompile Include="wwwroot\js\chat.ts" />
     <TypeScriptCompile Include="wwwroot\js\globals.ts" />
-    <TypeScriptCompile Include="wwwroot\js\partials.ts" />
+    <TypeScriptCompile Include="wwwroot\js\modals.ts" />
   </ItemGroup>
 
   <ItemGroup>
