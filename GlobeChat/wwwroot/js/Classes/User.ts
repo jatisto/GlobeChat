@@ -2,14 +2,15 @@
     constructor(Login: string, Age?: number, Gender?:string ) {
         this.login = Login;
         this.age = Age;
-        this.gender = Gender;       
+        this.gender = Gender;           
+       
     }
     login: string;
     gender: string | undefined;
     age: number | undefined;
-    element!: GUIUserListElement;   
-   
+    element!: GUIUserListElement;      
     isVisible: boolean = false;
+    invited: boolean = false;
     readonly isRenderable: boolean = true;
 
     Render(): void {

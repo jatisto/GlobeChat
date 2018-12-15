@@ -30,5 +30,33 @@
       "wwwroot/js/site.js",
       "wwwroot/js/User.js"
     ]
+  },
+  {
+    "outputFileName": "wwwroot/css/bundle.css",
+    "inputFiles": [
+      "wwwroot/css/webchatview.css",
+      "wwwroot/css/site.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/GUI/GUIBundle.js",
+    "inputFiles": [
+      "wwwroot/js/GUI/GUIButon.js",
+      "wwwroot/js/GUI/GUIChannelListElement.js",
+      "wwwroot/js/GUI/GUIChatFeedElement.js",
+      "wwwroot/js/GUI/GUIChatTabElement.js",
+      "wwwroot/js/GUI/GUIElement.js",
+      "wwwroot/js/GUI/GUIRenderable.js",
+      "wwwroot/js/GUI/GUIUserListElement.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/Classes/ClassBundle.js",
+    "inputFiles": [
+      "wwwroot/js/Classes/Channel.js",
+      "wwwroot/js/Classes/Conversation.js",
+      "wwwroot/js/Classes/TuserAvatar.js",
+      "wwwroot/js/Classes/User.js"
+    ]
   }
 ]

@@ -2,6 +2,7 @@
 class User {
     constructor(Login, Age, Gender) {
         this.isVisible = false;
+        this.invited = false;
         this.isRenderable = true;
         this.login = Login;
         this.age = Age;

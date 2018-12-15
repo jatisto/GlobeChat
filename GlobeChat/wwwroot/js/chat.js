@@ -8,8 +8,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 var username = "";
-var gender = "";
-var avatar = "";
 var croppie;
 var userUploadAvatar;
 var activeConversation = "";
@@ -57,10 +55,12 @@ var backButton = new GUIButton(backButtonDiv, "", () => {
     feedContainer.html('');
     feedContainer.append(conversations[currentChannelName].get());
     activeConversation = currentChannelName;
-    console.log("back button clicked");
     backButton.Hide();
     feedTop.html(currentChannelName);
-}, "btn-secondary rounded-circle", "fa fa-arrow-circle-left");
+    avatarTop.html('');
+    for (var key in tabs)
+        tabs[key].removeClass("active-conversation");
+}, "btn-secondary rounded-circle back-button", "fa fa-arrow-circle-left");
 backButton.Render();
 backButton.Hide();
 userMessage.keypress(function (e) {
@@ -133,6 +133,8 @@ $(document).ready(function () {
         zoom: 0,
         url: localStorage.getItem(username),
     }).then((data) => { croppie.setZoom(0); });
+    console.log("setting localstorage");
+    localStorage.setItem("info", info);
 });
 overlayHider.click(() => {
     overlay.fadeOut(100);

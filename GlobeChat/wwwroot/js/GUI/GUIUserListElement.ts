@@ -11,7 +11,7 @@
         } else user_img = localStorage.getItem(this.User.login);
        
         this.selector = $(`<li class="list-group-item user-item">
-                        <img src ="${user_img}" width="60px" height="60px" class=" rounded-circle"></img>
+                        <img src ="${user_img}" width="60px" height="60px" class="user-list-avatar rounded-circle"></img>
                         ${this.User.login}
                         <span class="user-details-badge">
                         <i class = "${iconClass} gender-icon"/>   ${this.User.age}

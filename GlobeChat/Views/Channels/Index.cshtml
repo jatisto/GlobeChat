@@ -1,107 +1,110 @@
 ﻿@model IEnumerable<GlobeChat.Models.Channel>
 
-@{
+    @{
     ViewData["Title"] = "Channels";
-}
+    }
 
-<div class="container-fluid h-100" id="main-container">
-    <div class="row justify-content-center h-100">
-        <div class="col-3">
-            <div class="card-header">
+    <div class="container-fluid h-100" id="main-container">
+        <div class="row justify-content-center h-100">
+            <div class="col-3">
+                <div class="card-header">
+                    <div class="input-group">
+                        <input type="text" placeholder="Find your channel..." name="" class="form-control search-channel">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text search_btn"><i class="fa fa-search"></i></span>
+                        </div>
+                    </div>
+                </div>
+                <ul class="list-group channel-list"></ul>
+            </div>
+
+            <div class="col-6">
+                <div class="card-header row">
+                    <div class="back-button-div col-1"></div>
+                    <div class="col-1 avatar-top"></div>
+                    <div class="col-10">
+                        <h2 class="feed-top"></h2>
+                    </div>
+                </div>
+                <div class="feed-container">
+
+                </div>
+                <div class="chat-tab-wrapper">
+                    <ul class="nav nav-tabs chat-tabs">
+                        <li class="nav-item nav-link main-channel-tab back-button">
+                            Conversations :
+                        </li>
+                    </ul>
+                </div>
+                <div class="input-group card-footer">
+                    <div class="input-group-append">
+                        <span class="input-group-text attach_btn"><i class="fa fa-smile-o fa-3x"></i></span>
+                    </div>
+                    <textarea name="" class="form-control message" placeholder="Type your message..."></textarea>
+                    <div class="input-group-append">
+                        <span class="input-group-text send_btn"><i class="fa fa-location-arrow fa-3x "></i></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-3">
+                <div class="card-header">
+                    Users in this channel
+                </div>
                 <div class="input-group">
-                    <input type="text" placeholder="Find your channel..." name="" class="form-control search-channel">
+                    <input type="text" placeholder="Find user..." name="" class="form-control search-user">
                     <div class="input-group-prepend">
                         <span class="input-group-text search_btn"><i class="fa fa-search"></i></span>
                     </div>
                 </div>
-            </div>
-            <ul class="list-group channel-list"></ul>
-        </div>
-
-        <div class="col-6">
-            <div class="card-header row">
-                <div class="back-button-div col-2"></div>
-                <div class="col-2 avatar-top"></div>
-                <div class="col-8"> <h2 class="feed-top">Message History</h2> </div>
-            </div>
-            <div class="feed-container">
-
-            </div>
-            <ul class="nav nav-tabs chat-tabs">
-                <li class="nav-item nav-link main-channel-tab">
-
-                </li>
-            </ul>
-
-            <div class="input-group card-footer">
-                <div class="input-group-append">
-                    <span class="input-group-text attach_btn"><i class="fa fa-smile-o fa-3x"></i></span>
+                <div class="user-container">
+                    <ul class="list-group user-list"></ul>
                 </div>
-                <textarea name="" class="form-control message" placeholder="Type your message..."></textarea>
-                <div class="input-group-append">
-                    <span class="input-group-text send_btn"><i class="fa fa-location-arrow fa-3x "></i></span>
+                <div class="card-footer rounded">
                 </div>
-            </div>
-        </div>
-
-        <div class="col-3">
-            <div class="card-header">
-                Users in this channel
-            </div>
-            <div class="input-group">
-                <input type="text" placeholder="Find user..." name="" class="form-control search-user">
-                <div class="input-group-prepend">
-                    <span class="input-group-text search_btn"><i class="fa fa-search"></i></span>
-                </div>
-            </div>
-            <div class="user-container">
-                <ul class="list-group user-list"></ul>
-            </div>
-            <div class="card-footer rounded">
             </div>
         </div>
     </div>
-</div>
 
-<div class="card text-center chatmodal user-settings-modal">
-    <div class="card-header container-fluid">
-        <h3 class="">
-            <i class="fa fa-cogs fa-1x"></i>
-            Chat settings
-            <button class="btn btn-dark hide-overlay fa fa-1x fa-close  float-right" />
-        </h3>
-        <hr />
-        <div class="row">
-            <div class="col-12">
-                <div class="row text-center" id="croppie-div">
-                    <img src="" class="user-settings-current-avatar" id="current-avatar" hidden />
-                </div>
-                <div class="row">
+    <div class="card text-center chatmodal user-settings-modal">
+        <div class="card-header container-fluid">
+            <h3 class="">
+                <i class="fa fa-cogs fa-1x"></i>
+                Chat settings
+                <button class="btn btn-dark hide-overlay fa fa-1x fa-close  float-right" />
+            </h3>
+            <hr />
+            <div class="row">
+                <div class="col-12">
+                    <div class="row text-center" id="croppie-div">
+                        <img src="" class="user-settings-current-avatar" id="current-avatar" hidden />
+                    </div>
+                    <div class="row">
 
-                    <label class="user-settings-pick-image-button btn btn-info btn-block">
-                        <i class="fa fa-image fa-1x"></i>
-                        Change your Avatar
-                        @Html.AntiForgeryToken()
-                        <input type="file" id="imageUploader" name="imageUploader" accept="image/*" hidden>
-                    </label>
+                        <label class="user-settings-pick-image-button btn btn-info btn-block">
+                            <i class="fa fa-image fa-1x"></i>
+                            Change your Avatar
+                            @Html.AntiForgeryToken()
+                            <input type="file" id="imageUploader" name="imageUploader" accept="image/*" hidden>
+                        </label>
+                    </div>
                 </div>
             </div>
-        </div>
-        <hr />
-        <div class="row">
-            <div class="col-12">
-                <input type="text" class="form-control" id="user-hello-message" placeholder="Introduce yourself">
+            <hr />
+            <div class="row">
+                <div class="col-12">
+                    <input type="text" class="form-control" id="user-hello-message" placeholder="Introduce yourself">
+                </div>
             </div>
-        </div>
-        <br />
-        <div class="row card-footer">
-            <button class="user-settings-save btn btn-success btn-block">
-                <i class="fa fa-save fa-1x"></i> Save Settings
-            </button>
+            <br />
+            <div class="row card-footer">
+                <button class="user-settings-save btn btn-success btn-block">
+                    <i class="fa fa-save fa-1x"></i> Save Settings
+                </button>
+            </div>
         </div>
     </div>
-</div>
-@section Styles
+    @section Styles
     {
     <link rel="stylesheet" href="~/css/webchatview.css" />
     <link rel="stylesheet" href="~/lib/animate.css/animate.css" />
@@ -109,13 +112,12 @@
     <link rel="stylesheet" href="~/lib/croppie/croppie.css" />
 
 
-}
-@section Scripts
+    }
+    @section Scripts
     {
-    <script src="~/lib/moment/min/moment-with-locales.min.js"></script>
-    <script src="~/lib/signalr/dist/browser/signalr.min.js"></script>
+    
+    <script src="~/lib/signalr/dist/browser/signalr.min.js"></script>    
     <script src="~/js/globals.js"></script>
-    <script src="~/js/graphics.js"></script>
     <script src="~/js/GUI/GUIRenderable.js"></script>
     <script src="~/js/GUI/GUIElement.js"></script>
     <script src="~/js/GUI/GUIChannelListElement.js"></script>
@@ -133,5 +135,5 @@
     <script src="~/js/modals.js"></script>
     <script src="~/lib/croppie/croppie.js"></script>
 
-}
+    }
 

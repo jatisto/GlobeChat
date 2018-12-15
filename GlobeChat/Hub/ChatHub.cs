@@ -1,13 +1,11 @@
 ﻿using GlobeChat.Interfaces;
 using GlobeChat.Models;
-
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.DependencyInjection;
-
 using System.Threading.Tasks;
 using System;
 using Microsoft.EntityFrameworkCore;
-using static GlobeChat.Enums.Chat;
+using static GlobeChat.Consts.Chat;
 using GlobeChat;
 using System.Linq;
 

@@ -11,6 +11,9 @@ using System.Diagnostics;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using System.Security.Cryptography;
+using System;
+using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 
 namespace GlobChat.Controllers
 {
@@ -27,24 +30,31 @@ namespace GlobChat.Controllers
         {
             if(User.IsInRole("Admin"))
                 return View(await _context.User.ToListAsync());
-                else return Redirect(Url.Content("~/"));
+                else return Redirect(Url.Content("Home/Index"));
         }
 
         // GET: Users
         public IActionResult Login()
         {
             if (HttpContext.Session.GetString("LoggedIn") != null)
-                return Redirect(Url.Content("~/"));
+                return Redirect(Url.Content("Home/Index"));
             return View();
         }
 
-
         public IActionResult Logout()
         {
-            HttpContext.SignOutAsync();
-            return Redirect(Url.Content("~/"));
-
+            HttpContext.SignOutAsync("Cookies");
+            return Redirect(Url.Content("/Users/LoggedOut"));
         }
+        [Route("/Users/LoggedOut")]
+        public IActionResult LoggedOut()
+        {
+            foreach (var cookieKey in Request.Cookies.Keys)
+                if(cookieKey!=".AspNet.Consent")Response.Cookies.Delete(cookieKey);
+            HttpContext.Session.Remove("LoggedIn");
+            return View();
+        }
+
 
         [HttpPost, ActionName("Login")]
         [ValidateAntiForgeryToken]
@@ -64,10 +74,7 @@ namespace GlobChat.Controllers
                 var principal = new ClaimsPrincipal(identity);
                 var props = new AuthenticationProperties();
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, props);
-                await Helpers.AddLogMessageAsync(_context, $"authenticating user + {user.Login}");                
                 HttpContext.Session.SetString("LoggedIn_Login", user.Login);
-                await Helpers.AddLogMessageAsync(_context, $"user authenticated + {user.Login}");
-                await Helpers.AddLogMessageAsync(_context, $"user status + {HttpContext.User.Identity.IsAuthenticated}");
                 return Redirect(Url.Content("~/"));
             }
             else
@@ -135,18 +142,17 @@ namespace GlobChat.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Login,Email,Gender,DateOfBirth,Password")] User user)
+        public async Task<IActionResult> Create([Bind("Id,Login,Email,Gender,DateOfBirth,Password")] User user, string passconf)
         {
             if (ModelState.IsValid)
             {
                 var code = Helpers.GenerateRandomString(8);
-
                 ActivationCode ActCode = new ActivationCode
                 {
                     Code = code,
                     User = user
                 };
-
+                
                 _context.Add(user);
                 _context.ActivationCodes.Add(ActCode);
                 await _context.SaveChangesAsync();
@@ -156,20 +162,12 @@ namespace GlobChat.Controllers
             return View();
         }
         [HttpGet]
-        [Route("/Users/Edit/{login}")]
-        public async Task<IActionResult> Edit(string login)
+        [Route("/Settings")]
+        public async Task<IActionResult> Edit()
         {
-            var user = await _context.User.FirstOrDefaultAsync(u => u.Login == login);
-
-            if (User.Identity.Name != user.Login)
-            {
-                return NotFound();
-            }
-            
-            if (user == null)
-            {
-                return NotFound();
-            }
+            var user = await _context.User.FirstOrDefaultAsync(u => u.Login == User.Identity.Name);
+            if (user == null) return NotFound();
+            if (User.Identity.Name != user.Login) return NotFound();         
             return View(user);
         }
 
@@ -177,71 +175,29 @@ namespace GlobChat.Controllers
         // To protect from overposting attacks, please enable the specif    ic properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Route("/Users/Edit/{login}")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Login,Email,Gender,DateOfBirth,Password")] User user)
-        {
-            if (User.Identity.Name != user.Login)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
+        public async Task<IActionResult> Edit(string login, [Bind("Id, Login, Password")] User user)
+        {            
+            if (User.Identity.Name != user.Login) return NotFound();          
+            var _user = await _context.User.FirstOrDefaultAsync(u => u.Login == login);
+            if (_user == null) return NotFound();
+            else {
                 try
                 {
-                    _context.Update(user);
+                    _user.Password = user.Password;
                     await _context.SaveChangesAsync();
+                    return View(user);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!UserExists(user.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(user);
+                    if (!UserExists(user.Id)) return NotFound();
+                    else throw;
+                }      
+            }        
         }
 
-        // GET: Users/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            return NotFound(); //TEMPORARY
-            if (id == null)
-            {
-                return NotFound();
-            }
-            var user = await _context.User
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            return View(user);
-        }
-
-        // POST: Users/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            return NotFound(); //TEMPORARY
-            var user = await _context.User.FindAsync(id);
-            var codes = await _context.ActivationCodes.FirstOrDefaultAsync(a => a.User.Id == id);
-
-            if (codes != null) _context.ActivationCodes.Remove(codes);
-            if (user != null) _context.User.Remove(user);
-
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
+       
         private bool UserExists(int id)
         {
             return _context.User.Any(e => e.Id == id);

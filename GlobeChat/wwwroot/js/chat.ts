@@ -1,6 +1,4 @@
 ﻿var username = "";
-var gender = "";
-var avatar = "";
 var croppie: Croppie;
 var userUploadAvatar: any;
 var activeConversation = "";
@@ -55,10 +53,11 @@ var backButton = new GUIButton(backButtonDiv, "", () => {
     feedContainer.html('');
     feedContainer.append(conversations[currentChannelName].get());
     activeConversation = currentChannelName;
-    console.log("back button clicked");
     backButton.Hide();
     feedTop.html(currentChannelName)
-}, "btn-secondary rounded-circle", "fa fa-arrow-circle-left");
+    avatarTop.html('');
+    for (var key in tabs) tabs[key].removeClass("active-conversation");
+}, "btn-secondary rounded-circle back-button", "fa fa-arrow-circle-left");
 
 backButton.Render();
 backButton.Hide();
@@ -139,8 +138,8 @@ $(document).ready(function () {
         zoom: 0,
         url: <string><unknown>localStorage.getItem(username),
     }).then((data) => { croppie.setZoom(0); })
-
-    
+    console.log("setting localstorage");
+    localStorage.setItem("info", info);
 });
 
 overlayHider.click(() => {
@@ -163,7 +162,7 @@ async function readImage(input: any): Promise<string> {
                 userSettingsCurrentAvatar.attr('src', (<any><unknown>e).target.result);
                 userUploadAvatar = (<any><unknown>e).target.result;               
                 result = userUploadAvatar;                   
-                    croppie.destroy();
+                croppie.destroy();
                 croppie = new Croppie(<HTMLElement><unknown>document.getElementById("current-avatar"), croppieopts);
                 croppie.bind({
                     zoom: 0,

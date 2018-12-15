@@ -29,22 +29,10 @@
   <ItemGroup>
     <Content Remove="bundleconfig.json" />
     <Content Remove="wwwroot\GUIChannelListElement.ts" />
-    <Content Remove="wwwroot\js\Channel.ts" />
     <Content Remove="wwwroot\js\chat.ts" />
-    <Content Remove="wwwroot\js\Classes\Conversation.ts" />
-    <Content Remove="wwwroot\js\Classes\TuserAvatar.ts" />
     <Content Remove="wwwroot\js\connection.ts" />
     <Content Remove="wwwroot\js\globals.ts" />
-    <Content Remove="wwwroot\js\GUIButon.ts" />
-    <Content Remove="wwwroot\js\GUIChannelListElement.ts" />
-    <Content Remove="wwwroot\js\GUIChatFeedElement.ts" />
-    <Content Remove="wwwroot\js\GUIElement.ts" />
-    <Content Remove="wwwroot\js\GUIRenderable.ts" />
-    <Content Remove="wwwroot\js\GUI\graphics.ts" />
-    <Content Remove="wwwroot\js\GUI\GUIChatTabElement.ts" />
     <Content Remove="wwwroot\js\helpers.ts" />
-    <Content Remove="wwwroot\js\modals.ts" />
-    <Content Remove="wwwroot\js\User.ts" />
   </ItemGroup>
 
   <ItemGroup>
@@ -55,7 +43,6 @@
     <TypeScriptCompile Include="wwwroot\js\Classes\TuserAvatar.ts" />
     <TypeScriptCompile Include="wwwroot\js\Classes\Conversation.ts" />
     <TypeScriptCompile Include="wwwroot\js\connection.ts" />
-    <TypeScriptCompile Include="wwwroot\js\GUI\graphics.ts" />
     <TypeScriptCompile Include="wwwroot\js\GUI\GUIChatFeedElement.ts" />
     <TypeScriptCompile Include="wwwroot\js\GUI\GUIButon.ts" />
     <TypeScriptCompile Include="wwwroot\js\Classes\User.ts" />
@@ -68,7 +55,6 @@
     <TypeScriptCompile Include="wwwroot\js\Classes\Channel.ts" />
     <TypeScriptCompile Include="wwwroot\js\chat.ts" />
     <TypeScriptCompile Include="wwwroot\js\globals.ts" />
-    <TypeScriptCompile Include="wwwroot\js\modals.ts" />
   </ItemGroup>
 
   <ItemGroup>
@@ -79,6 +65,9 @@
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
     <Content Update="Views\Shared\_UserInfoDebug.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Users\LoggedOut.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
   </ItemGroup>

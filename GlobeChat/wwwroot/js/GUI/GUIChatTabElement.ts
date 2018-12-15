@@ -2,9 +2,8 @@
     constructor(parent: JQuery<HTMLElement>, login: string, hash: string, Action: () => void, css?: string) {
         super(parent);
         this.name = name;
-        this.selector = $(`<li class="nav-item nav-link chat-tab ${css}"> ${login} </li>`);
+        this.selector = $(`<li class="nav-item nav-link chat-tab ${css}"> <img src="${localStorage.getItem(login)}" class="feed-top-avatar rounded-circle"/> ${login} </li>`);
         this.selector.click(Action);        
-
         this.acceptButton = new GUIButton(this.selector, "", () => {
             acceptInvitation(hash);
             this.closeButton.Render();
@@ -22,6 +21,8 @@
                 backButton.Hide();
                 pvt = false;
                 feedContainer.empty().append(conversations[currentChannelName].get());
+                feedTop.html(currentChannelName);
+                avatarTop.hide();
             }
             endConversation(hash, login);            
             delete conversations[hash];

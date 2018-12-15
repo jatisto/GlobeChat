@@ -49,7 +49,6 @@ async function joinChannel(channelName: string) {
         feedContainer.empty();
         conversations[channelName] = new Conversation(channelName);
         feedContainer.append(conversations[currentChannelName].get());
-
     });
 }
 
@@ -57,7 +56,7 @@ function loadChannels(): void {
     var resp = ajaxRequestParams("POST", "api/getChannels", "", null);
     resp.then(function (response) {
         channels = <Channel[]><unknown>response;
-        channelList.html('');
+        channelList.empty();
         channels.forEach((channel) => {
             channel.element = new GUIChannelListElement($(".channel-list"), channel);
             let joinButton = new GUIButton(channel.element.selector, "Join",
@@ -99,14 +98,17 @@ function addUserToChannel(user: User): void {
         console.log("adding user " + user.login);
         if (username != user.login) {
             user.element = new GUIUserListElement(userList, user, "");
-            let inviteButton = new GUIButton(user.element.selector, "", () => {
-                sendInvitation(user.login)
+            let inviteButton = new GUIButton(user.element.selector, "Invite to conversation", () => {
+                conversations[currentChannelName].add(new GUIChatFeedElement($(), "info",
+                    "Invitation to " + user.login + " sent. If user accepts your invitation new Conversation Tab will pop."))
+                user.invited = true;
+               sendInvitation(user.login)
             }, "invite-btn float-right btn-success", "fa fa-comments");
-
-            let blockButton = new GUIButton(user.element.selector, "", () => {
+            
+            /* let blockButton = new GUIButton(user.element.selector, "", () => {
             }, "invite-btn float-right btn-danger", "fa fa-close");
-
-            blockButton.Render();
+            blockButton.Render(); */
+            
             inviteButton.Render();
             users.push(user);
         }
@@ -164,7 +166,8 @@ function addConversation(login: string, hash: string) {
             avatarTop.html(`<img src="${localStorage.getItem(login)}" class="feed-top-avatar rounded-circle"/>`)
             activeConversation = hash;
             pvt = true;
-            feedTop.text("Conversation with " + login);            
+            feedTop.text("Conversation with " + login);
+            for (var key in tabs) tabs[key].removeClass("active-conversation");
             tab.selector.addClass("active-conversation");
         }
         console.log("conversation " + hash + " tab clicked clicked");

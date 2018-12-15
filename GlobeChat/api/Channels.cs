@@ -8,7 +8,7 @@ using GlobeChat.Models;
 using SignalRWebPack.Hubs;
 using GlobeChat;
 using Microsoft.AspNetCore.SignalR;
-using static GlobeChat.Enums.Chat;
+using static GlobeChat.Consts.Chat;
 namespace GlobChat.api
 {
     public class Response
@@ -33,9 +33,8 @@ namespace GlobChat.api
         public ChannelsControllerAPI(GlobeChatContext context, IHubContext<ChatHub> hubContext)
         {
             _context = context;
-            _chatHubContext = hubContext;
+               _chatHubContext = hubContext;
         }
-
       
         [HttpPost]
         [Route("/api/Channels/{channelName}/join")]
@@ -106,7 +105,7 @@ namespace GlobChat.api
             return await Avatars.ToAsyncEnumerable().ToList();
             
         }
-
+        /*
         [HttpGet]
         [Route("populate")]
         public void populate()
@@ -168,7 +167,7 @@ namespace GlobChat.api
             }
             return Ok(channel);
         }
-
+        */
         // PUT: api/ChannelsControllerAPI/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutChannel([FromRoute] int id, [FromBody] Channel channel)
@@ -214,12 +213,11 @@ namespace GlobChat.api
 
             _context.Channels.Add(channel);
             await _context.SaveChangesAsync();
-
             return CreatedAtAction("GetChannel", new { id = channel.Id }, channel);
         }
 
         // DELETE: api/ChannelsControllerAPI/5
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}")]        
         public async Task<IActionResult> DeleteChannel([FromRoute] int id)
         {
             if (!ModelState.IsValid)

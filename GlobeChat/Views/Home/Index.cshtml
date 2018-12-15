@@ -1,17 +1,69 @@
 ﻿@using Microsoft.AspNetCore.Http
 
-
 @{
     ViewData["Title"] = "Home Page";
 }
 
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h3>
+                Welcome to GlobeChat
+            </h3>
+            <dl>
+                <dt>
+                    What is GlobeChat?
+                </dt>
+                <dd>
+                    GlobeChat is a simple WebApplication written by Paweł Potępa using ASP Net Core 2.1. 
+                    <p>
+                        <a href="https://github.com/ppotepa/GlobeChat">See source code on <b> <i class="fa fa-github"></i>GitHub</b></a>
+                    </p>
+                </dd>
 
+                <dt>
+                    Technologies included
+                </dt>
+            </dl>
+            <ul>
+                <li class="list-item">
+                    Written in C#
+                </li>
+                <li class="list-item">
+                    ASP .NET Core 2.1
+                </li>
+                <li class="list-item">
+                    ASP .NET Core MVC
+                </li>
+                <li class="list-item">
+                    API Controllers
+                </li>
+                <li class="list-item">
+                    SignalR
+                </li>
+                <li class="list-item">
+                    Entity Framework
+                </li>
+                <li class="list-item">
+                    JavaScript / TypeScript
+                </li>
+                <li class="list-item">
+                    JQuery
+                </li>
+                <li class="list-item">
+                    Bootstrap
+                </li>
+                <li class="list-item">
+                    Animate CSS
+                </li>
+                <li class="list-item">
+                    Croppie
+                </li>
+            </ul>
+            <p>
+                <small><span>This simple Application demonstrates the power of <strong>SignalR</strong></span></small> <span>that allows server code to send asynchronous notifications to client-side web applications.</span>
+            </p>
+        </div>
+    </div>
+</div>
 
-@if (@Context.Session.Keys.Count() > 0)
-{
-    <p>Test</p>
-}
-@foreach (var s in @Context.Session.Keys)
-{
-    <p> @s.FirstOrDefault().ToString() </p>
-}
