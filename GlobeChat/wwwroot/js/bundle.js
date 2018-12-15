@@ -1,7 +1,16 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var username = "";
 var gender = "";
 var avatar = "";
+var croppie;
 var userUploadAvatar;
 var activeConversation = "";
 var currentChannelName = "Global";
@@ -17,11 +26,22 @@ const userSearch = $(".search-user");
 const userSettingsModal = $(".user-settings-modal");
 const userSettingsSaveButton = $(".user-settings-save");
 const imageUploader = $("#imageUploader");
-const userSettingsCurrentAvatar = $(".user-settings-current-avatar");
+const userSettingsCurrentAvatar = $("#current-avatar");
 const overlay = $(".overlay");
 const overlayHider = $(".hide-overlay");
 const modals = $(".chatmodal");
 const backButtonDiv = $(".back-button-div");
+const croppieDiv = $("#croppie-div");
+const avatarTop = $(".avatar-top");
+const croppieopts = {
+    enableExif: false,
+    enforceBoundary: true,
+    viewport: {
+        width: 250,
+        height: 250,
+    },
+    boundary: { width: 300, height: 300 },
+};
 const maxAvatarSize = 1024 * 100;
 const action_interval = 100;
 var last_action = 0;
@@ -29,6 +49,7 @@ var channels = new Array();
 var users = new Array();
 var conversations = {};
 var tabs = {};
+var avatars = {};
 var pvt = false;
 feedTop.html(currentChannelName);
 var backButton = new GUIButton(backButtonDiv, "", () => {
@@ -38,6 +59,7 @@ var backButton = new GUIButton(backButtonDiv, "", () => {
     activeConversation = currentChannelName;
     console.log("back button clicked");
     backButton.Hide();
+    feedTop.html(currentChannelName);
 }, "btn-secondary rounded-circle", "fa fa-arrow-circle-left");
 backButton.Render();
 backButton.Hide();
@@ -106,31 +128,57 @@ $(document).ready(function () {
             (text.indexOf(valThis) == 0) ? $(this).show() : $(this).hide();
         });
     });
+    croppie = new Croppie(document.getElementById("current-avatar"), croppieopts);
+    croppie.bind({
+        zoom: 0,
+        url: localStorage.getItem(username),
+    }).then((data) => { croppie.setZoom(0); });
 });
 overlayHider.click(() => {
     overlay.fadeOut(100);
     modals.hide();
 });
-userSettingsSaveButton.click(() => { });
 $(imageUploader).change(function () {
-    readImage(this);
+    var newimg = readImage(this);
 });
 function readImage(input) {
-    if (input.files && input.files[0]) {
-        var reader = new FileReader();
-        reader.onload = function (e) {
-            var result = e.target.result;
-            if (result.length < maxAvatarSize) {
-                userSettingsCurrentAvatar.attr('src', e.target.result);
-                userUploadAvatar = e.target.result;
-            }
-            else {
-                alert("Image is too big");
-            }
-        };
-        reader.readAsDataURL(input.files[0]);
-    }
+    return __awaiter(this, void 0, void 0, function* () {
+        var result = "Error";
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                var result = e.target.result;
+                if (result.length < maxAvatarSize) {
+                    userSettingsCurrentAvatar.attr('src', e.target.result);
+                    userUploadAvatar = e.target.result;
+                    result = userUploadAvatar;
+                    croppie.destroy();
+                    croppie = new Croppie(document.getElementById("current-avatar"), croppieopts);
+                    croppie.bind({
+                        zoom: 0,
+                        url: result,
+                        points: [100, 100, 200, 200],
+                    }).then(() => {
+                        croppie.setZoom(0);
+                    });
+                }
+                else
+                    alert("Image is too big");
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+        return userSettingsCurrentAvatar.val();
+    });
 }
+userSettingsSaveButton.click(() => {
+    userUploadAvatar = croppie.result().then(function (val) {
+        console.log(val);
+        var data = JSON.stringify(new TuserAvatar(username, val));
+        ajaxRequestParamsJSON("POST", `api/Avatars`, data, null);
+    }).then(() => {
+        overlay.fadeOut();
+    });
+});
 
 "use strict";
 var CONVERSATION_STATUS;
@@ -187,6 +235,24 @@ function ajaxRequestParams(_type, _url, _params, _callback) {
         });
     });
 }
+function ajaxRequestParamsJSON(_type, _url, _params, _callback) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return new Promise((resolve, reject) => {
+            var request = $.ajax({
+                contentType: "application/json",
+                type: _type,
+                url: _url,
+                data: _params,
+            });
+            request.done(function (res) {
+                resolve(res);
+            });
+            request.fail(function (jqXHR, textStatus) {
+                reject(jqXHR);
+            });
+        });
+    });
+}
 function loadPartial(partial) {
     overlay.show();
     partial.addClass("fadeInDown animated").show();
@@ -224,13 +290,21 @@ function loadChannels() {
 function loadUsers(channelName) {
     users = [];
     var resp = ajaxRequestParams("POST", "api/Channels/" + channelName + "/users", "", null);
-    resp.then(function (response) {
-        userList.html('');
-        let _users = response;
-        _users.sort(function (x, y) {
-            return x.login == username ? -1 : y.login == username ? 1 : 0;
+    var resp_avatars = ajaxRequestParams("POST", "api/Channels/" + channelName + "/users/avatars", "", null);
+    resp_avatars.then(function (response) {
+        let _avatars = response;
+        _avatars.forEach((avatar) => {
+            localStorage.setItem(avatar.login, avatar.image);
         });
-        _users.forEach((user) => addUserToChannel(user));
+    }).then(() => {
+        resp.then(function (response) {
+            userList.html('');
+            let _users = response;
+            _users.sort(function (x, y) {
+                return x.login == username ? -1 : y.login == username ? 1 : 0;
+            });
+            _users.forEach((user) => addUserToChannel(user));
+        });
     });
 }
 function addUserToChannel(user) {
@@ -298,9 +372,11 @@ function addConversation(login, hash) {
             if (tabs[hash].hasClass("glow-unread"))
                 tabs[hash].removeClass("glow-unread");
             backButton.selector.show();
+            avatarTop.html(`<img src="${localStorage.getItem(login)}" class="feed-top-avatar rounded-circle"/>`);
             activeConversation = hash;
             pvt = true;
             feedTop.text("Conversation with " + login);
+            tab.selector.addClass("active-conversation");
         }
         console.log("conversation " + hash + " tab clicked clicked");
     }, "glow-unread");

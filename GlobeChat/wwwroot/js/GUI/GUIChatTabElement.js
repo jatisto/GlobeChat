@@ -5,7 +5,7 @@ class GUIChatTabElement extends GUIElement {
         this.isVisible = false;
         this.isRenderable = true;
         this.name = name;
-        this.selector = $(`<li class="nav-item nav-link channel-tab ${css}"> ${login} </li>`);
+        this.selector = $(`<li class="nav-item nav-link chat-tab ${css}"> ${login} </li>`);
         this.selector.click(Action);
         this.acceptButton = new GUIButton(this.selector, "", () => {
             acceptInvitation(hash);

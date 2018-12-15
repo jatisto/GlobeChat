@@ -1,5 +1,5 @@
 ﻿
-async function ajaxRequestParams(_type: string, _url: string, _params: string, _callback: null) {
+async function ajaxRequestParams(_type: string, _url: string, _params: any, _callback: null) {
     return new Promise<string>((resolve, reject) => {
         var request = $.ajax({
             type: _type,
@@ -9,6 +9,25 @@ async function ajaxRequestParams(_type: string, _url: string, _params: string, _
         request.done(function (res) {
             resolve(res);
         });
+
+        request.fail(function (jqXHR, textStatus) {
+            reject(jqXHR);
+        });
+    })
+}
+
+async function ajaxRequestParamsJSON(_type: string, _url: string, _params: any, _callback: null) {
+    return new Promise<string>((resolve, reject) => {
+        var request = $.ajax({
+            contentType: "application/json",
+            type: _type,
+            url: _url,
+            data: _params,
+        });
+        request.done(function (res) {
+            resolve(res);
+        });
+
         request.fail(function (jqXHR, textStatus) {
             reject(jqXHR);
         });
@@ -16,21 +35,21 @@ async function ajaxRequestParams(_type: string, _url: string, _params: string, _
 }
 
 function loadPartial(partial: JQuery<HTMLElement>) {
-        overlay.show();
-        partial.addClass("fadeInDown animated").show();           
+    overlay.show();
+    partial.addClass("fadeInDown animated").show();
 }
 
 async function joinChannel(channelName: string) {
-    await ajaxRequestParams("POST", "api/Channels/" + channelName + "/join", "", null).then((channelName) => {        
+    await ajaxRequestParams("POST", "api/Channels/" + channelName + "/join", "", null).then((channelName) => {
         loadChannels();
-        loadUsers(channelName);  
+        loadUsers(channelName);
         delete conversations[currentChannelName];
         currentChannelName = channelName;
         feedTop.html(channelName);
         feedContainer.empty();
         conversations[channelName] = new Conversation(channelName);
         feedContainer.append(conversations[currentChannelName].get());
-        
+
     });
 }
 
@@ -52,24 +71,34 @@ function loadChannels(): void {
     });
 }
 
-function loadUsers(channelName:string): void {
+function loadUsers(channelName: string): void {
     users = [];
     var resp = ajaxRequestParams("POST", "api/Channels/" + channelName + "/users", "", null);
-    resp.then(function (response) {
-        userList.html('');
-        let _users = <User[]><unknown>response;
-        _users.sort(function (x: User, y: User) {
-            return x.login == username ? -1 : y.login == username ? 1 : 0;
+    var resp_avatars = ajaxRequestParams("POST", "api/Channels/" + channelName + "/users/avatars", "", null);
+
+    resp_avatars.then(function (response) {
+        let _avatars = <TuserAvatar[]><unknown>response;
+        _avatars.forEach((avatar) => {
+            localStorage.setItem(avatar.login, avatar.image);           
         });
-        _users.forEach((user) => addUserToChannel(user));       
-    });
+    }).then(() => {
+        resp.then(function (response) {
+            userList.html('');
+            let _users = <User[]><unknown>response;
+            _users.sort(function (x: User, y: User) {
+                return x.login == username ? -1 : y.login == username ? 1 : 0;
+            });
+            _users.forEach((user) => addUserToChannel(user));
+        });
+    })
+
 }
 
-function addUserToChannel(user: User): void {   
+function addUserToChannel(user: User): void {
     try {
-        console.log("adding user " + user.login);        
+        console.log("adding user " + user.login);
         if (username != user.login) {
-            user.element = new GUIUserListElement(userList, user,"");
+            user.element = new GUIUserListElement(userList, user, "");
             let inviteButton = new GUIButton(user.element.selector, "", () => {
                 sendInvitation(user.login)
             }, "invite-btn float-right btn-success", "fa fa-comments");
@@ -87,8 +116,8 @@ function addUserToChannel(user: User): void {
                 loadPartial(userSettingsModal);
             }, "settings-btn float-right", "fa fa-cogs");
             settingsButton.Render();
-        }        
-        user.element.Render();           
+        }
+        user.element.Render();
     }
     catch (e) {
         console.log(e);
@@ -105,7 +134,7 @@ function removeUserFromList(login: string) {
             users = users.filter(u => u.login != u.login);
         } catch (e) {
             console.log(e);
-        }        
+        }
     }
 }
 
@@ -127,17 +156,19 @@ function generateRandomString(length: number): string {
 function addConversation(login: string, hash: string) {
     let tab = new GUIChatTabElement(chatTabs, login, hash, () => {
         if (conversations[hash].status == CONVERSATION_STATUS.ACCEPTED ||
-            conversations[hash].status == CONVERSATION_STATUS.REJECTED) {           
+            conversations[hash].status == CONVERSATION_STATUS.REJECTED) {
             feedContainer.empty().append(conversations[hash].get());
             if (tabs[hash].hasClass("glow-unread"))
                 tabs[hash].removeClass("glow-unread");
-            backButton.selector.show();            
+            backButton.selector.show();
+            avatarTop.html(`<img src="${localStorage.getItem(login)}" class="feed-top-avatar rounded-circle"/>`)
             activeConversation = hash;
             pvt = true;
-            feedTop.text("Conversation with " + login);
-        }            
+            feedTop.text("Conversation with " + login);            
+            tab.selector.addClass("active-conversation");
+        }
         console.log("conversation " + hash + " tab clicked clicked");
-    },"glow-unread")
+    }, "glow-unread")
     if (hash in conversations) {
         tab.rejectButton.Remove();
         tab.acceptButton.Remove();

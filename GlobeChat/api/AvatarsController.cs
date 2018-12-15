@@ -6,6 +6,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using GlobeChat.Models;
+using Newtonsoft.Json;
+using System.Net;
+using GlobeChat.Attributes;
+using GlobeChat.RequestTypes;
 
 namespace GlobeChat.api
 {
@@ -20,7 +24,7 @@ namespace GlobeChat.api
             _context = context;
         }
 
-        // GET: api/Avatars/5
+        // GET: api/Avatars/login
         [HttpGet("{login}")]
         public async Task<IActionResult> GetAvatar([FromRoute] string login)
         {
@@ -74,19 +78,24 @@ namespace GlobeChat.api
             return NoContent();
         }
 
-        // POST: api/Avatars
-        [HttpPost]
-        public async Task<IActionResult> PostAvatar([FromBody] Avatar avatar)
+        // POST: api/Avatars/login                
+        
+        [HttpPost]                
+        [CustomRequestSizeLimit(valueCountLimit: 102400)]
+        public async Task<string> PostAvatar(object data)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
+            var _data = JsonConvert.DeserializeObject<TuserAvatar>(data.ToString());
+            var user = await _context.User.FirstOrDefaultAsync(u => u.Login == _data.login);
+            if (user == null) return "User not found";
+            else 
+            { 
+                var avatar = await _context.Avatar.FirstOrDefaultAsync(a => a.User == user);
+                if (avatar == null) await _context.Avatar.AddAsync(new Avatar(user, _data.image));
+                else avatar.image = _data.image;
+                await _context.SaveChangesAsync();
+                return "Data saved";
             }
-
-            _context.Avatar.Add(avatar);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetAvatar", new { id = avatar.id }, avatar);
+            
         }
 
         // DELETE: api/Avatars/login

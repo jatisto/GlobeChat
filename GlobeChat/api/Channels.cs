@@ -61,17 +61,16 @@ namespace GlobChat.api
         [HttpPost]
         public async Task<dynamic> GetChannels()
         {
-            var Few = from c in _context.Channels
+            var Less = from c in _context.Channels
                       select new
                       {
-#pragma warning disable IDE0037 // Use inferred member name
+                          #pragma warning disable IDE0037 // Use inferred member name
                           ChannelName = c.ChannelName,
-
                           UserCount = c.Users.Count,
                           CSSclass = Helpers.RateUserCount(c.Users.Count),
                           Id = c.Id
                       };
-            return await Few.OrderByDescending(c => c.UserCount).ToListAsync();
+            return await Less.OrderByDescending(c => c.UserCount).ToListAsync();
         }
         [HttpGet]
 
@@ -80,8 +79,7 @@ namespace GlobChat.api
         public async Task<dynamic> GetUsers([FromRoute] string channelName)
         {
             var Channel = await _context.Channels.FirstOrDefaultAsync(c => c.ChannelName == channelName);
-            var Users = Channel.Users;
-            var Few = from u in Users
+            var Less = from u in Channel.Users
                       select new
                       {
                           Login = u.Login,
@@ -90,7 +88,23 @@ namespace GlobChat.api
                           Gender = u.Gender
                       };
 
-            return await Few.ToAsyncEnumerable().ToList();
+            return await Less.ToAsyncEnumerable().ToList();
+        }
+
+        [HttpPost]
+        [Route("{channelName}/users/avatars")]
+        public async Task<dynamic> GetAvatars([FromRoute] string channelName)
+        {
+            var Users = _context.User.Where(u => u.Channel.ChannelName == channelName);
+            var Avatars = _context.User.Where(u => u.Channel.ChannelName == channelName)
+                .Join(_context.Avatar.Where(a => a.image != null),
+                u => u.Login,
+                a => a.User.Login, (u, a) => new {
+                    login = u.Login, image = a.image
+                });
+           
+            return await Avatars.ToAsyncEnumerable().ToList();
+            
         }
 
         [HttpGet]

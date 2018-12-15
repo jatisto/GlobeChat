@@ -2,7 +2,7 @@
     constructor(parent: JQuery<HTMLElement>, login: string, hash: string, Action: () => void, css?: string) {
         super(parent);
         this.name = name;
-        this.selector = $(`<li class="nav-item nav-link channel-tab ${css}"> ${login} </li>`);
+        this.selector = $(`<li class="nav-item nav-link chat-tab ${css}"> ${login} </li>`);
         this.selector.click(Action);        
 
         this.acceptButton = new GUIButton(this.selector, "", () => {

@@ -9,9 +9,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.FileProviders;
-using System.IO;
+
 using System;
+using Microsoft.AspNetCore.Http.Features;
 //using SignalRChat.Hubs;
 
 namespace GlobeChat
@@ -31,25 +31,34 @@ namespace GlobeChat
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.Configure<CookiePolicyOptions>(options => {
+
+            services.Configure<FormOptions>(options =>
+            {
+                options.ValueCountLimit = 200; // 200 items max
+                options.ValueLengthLimit = 1024 * 1024 * 100; // 100MB max len form data
+            });
+
+            services.Configure<CookiePolicyOptions>(options => 
+            {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.                
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
+
             });
 
             services.AddDistributedMemoryCache();
-
-            services.AddSession(options => {
-                // Set a short timeout for easy testing.
+            services.AddSession(options => 
+            {
                 options.IdleTimeout = TimeSpan.FromSeconds(1000);
                 options.Cookie.HttpOnly = true;
             });
 
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+           
             services.AddDbContext<GlobeChatContext>(options =>
-         options
-         .UseSqlServer(Configuration.GetConnectionString("GlobChatContext"))
-         .UseLazyLoadingProxies());
+             options.UseSqlServer(Configuration.GetConnectionString("GlobChatContext"))
+             .UseLazyLoadingProxies());
             services.AddSignalR();
             services.AddScoped<ChannelsControllerAPI>();
             services.AddHttpContextAccessor();
@@ -63,7 +72,7 @@ namespace GlobeChat
 
             });
 
-            services.AddSingleton<IDbContextAccessor, SignalRWebPack.Hubs.ChatHub>();
+            services.AddSingleton<IDbContextAccessor, SignalRWebPack.Hubs.ChatHub>();           
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -86,9 +95,6 @@ namespace GlobeChat
             app.UseDefaultFiles();
             app.UseCookiePolicy();
             app.UseStaticFiles();
-            
-
-
 
             app.UseSignalR(routes => {
                 routes.MapHub<SignalRWebPack.Hubs.ChatHub>("/hub");

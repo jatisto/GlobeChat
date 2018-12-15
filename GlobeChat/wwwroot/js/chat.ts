@@ -1,6 +1,7 @@
 ﻿var username = "";
 var gender = "";
 var avatar = "";
+var croppie: Croppie;
 var userUploadAvatar: any;
 var activeConversation = "";
 var currentChannelName = "Global";
@@ -16,11 +17,25 @@ const userSearch = $(".search-user");
 const userSettingsModal = $(".user-settings-modal");
 const userSettingsSaveButton = $(".user-settings-save");
 const imageUploader = $("#imageUploader");
-const userSettingsCurrentAvatar = $(".user-settings-current-avatar");
+const userSettingsCurrentAvatar = $("#current-avatar");
 const overlay = $(".overlay");
 const overlayHider = $(".hide-overlay");
 const modals = $(".chatmodal");
 const backButtonDiv = $(".back-button-div");
+const croppieDiv = $("#croppie-div");
+const avatarTop = $(".avatar-top");
+
+const croppieopts = {
+    enableExif: false,
+    enforceBoundary: true,
+    viewport: {
+        width: 250,
+        height: 250,
+    },
+    boundary: { width: 300, height: 300 },
+    
+}
+
 const maxAvatarSize = 1024 * 100;
 
 const action_interval = 100;
@@ -30,6 +45,7 @@ var channels = new Array<Channel>();
 var users = new Array<User>();
 var conversations: { [id: string]: Conversation; } = {};
 var tabs: { [id: string]: JQuery<HTMLElement>; } = {};
+var avatars: { [id: string]: TuserAvatar } = {};
 var pvt = false;
 
 feedTop.html(currentChannelName);
@@ -41,6 +57,7 @@ var backButton = new GUIButton(backButtonDiv, "", () => {
     activeConversation = currentChannelName;
     console.log("back button clicked");
     backButton.Hide();
+    feedTop.html(currentChannelName)
 }, "btn-secondary rounded-circle", "fa fa-arrow-circle-left");
 
 backButton.Render();
@@ -51,7 +68,7 @@ userMessage.keypress(function (e) {
         case "Enter": {
             if (!pvt) sendMessage(<string>userMessage.val());
             else if (conversations[activeConversation].status != CONVERSATION_STATUS.ENDED)
-                sendPrivateMessage(activeConversation, <string>userMessage.val());
+                    sendPrivateMessage(activeConversation, <string>userMessage.val());
             userMessage.val(''); break
         };
     }
@@ -116,32 +133,61 @@ $(document).ready(function () {
             (text.indexOf(<string>valThis) == 0) ? $(this).show() : $(this).hide();
         });
     });
+
+    croppie = new Croppie(<HTMLElement><unknown>document.getElementById("current-avatar"), croppieopts);
+    croppie.bind({
+        zoom: 0,
+        url: <string><unknown>localStorage.getItem(username),
+    }).then((data) => { croppie.setZoom(0); })
+
+    
 });
 
 overlayHider.click(() => {
     overlay.fadeOut(100);
     modals.hide();
 });
-userSettingsSaveButton.click(() => { });
 
-$(imageUploader).change(function () {
-    readImage(this);
+$(imageUploader).change(function () {     
+    var newimg = readImage(this);    
 });
 
 
-function readImage(input:any) {
+async function readImage(input: any): Promise<string> {
+    var result: string = "Error";
     if (input.files && input.files[0]) {
-        var reader = new FileReader();
+        var reader = new FileReader();                
         reader.onload = function (e) {
             var result: String = (<any><unknown>e).target.result;
             if (result.length < maxAvatarSize) {
                 userSettingsCurrentAvatar.attr('src', (<any><unknown>e).target.result);
-                userUploadAvatar = (<any><unknown>e).target.result;
-            }
-            else {
-                alert("Image is too big");
-            }
+                userUploadAvatar = (<any><unknown>e).target.result;               
+                result = userUploadAvatar;                   
+                    croppie.destroy();
+                croppie = new Croppie(<HTMLElement><unknown>document.getElementById("current-avatar"), croppieopts);
+                croppie.bind({
+                    zoom: 0,
+                    url: <string>result,
+                    points: [100, 100, 200, 200],                                      
+                }).then(() => {
+                    croppie.setZoom(0)
+                });               
+              }            
+            else alert("Image is too big");              
         }
-        reader.readAsDataURL(input.files[0]);
-    }
+        reader.readAsDataURL(input.files[0]);       
+    }       
+    return <string>userSettingsCurrentAvatar.val();    
 }
+
+userSettingsSaveButton.click(() => {
+    userUploadAvatar = croppie.result().then(function (val: any): void {         
+        console.log(val);
+        var data = JSON.stringify(new TuserAvatar(username, val));
+        ajaxRequestParamsJSON("POST", `api/Avatars`, data, null);    
+    }).then(() => {
+        overlay.fadeOut();
+    });
+   
+})
+

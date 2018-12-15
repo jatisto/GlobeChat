@@ -148,3 +148,23 @@
  max-height:400px;
  max-width:300px;
 }
+#croppie-div {
+    width:300px;
+    height:400px;
+}
+
+.feed-top-avatar {
+    width: 50px;
+    height: 50px;
+}
+.feed-avatar {
+    width: 25px;
+    height: 25px;
+}
+.active-conversation {
+    background-color:aliceblue;
+}
+.chat-tab {
+    border:1px;
+    border-color:rgba(255, 255, 255, 0.19);
+}

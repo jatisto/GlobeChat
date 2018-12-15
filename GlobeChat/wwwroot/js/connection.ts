@@ -10,7 +10,6 @@ connection.on(USER_JOINED_CHANNEL, (user: any, newChannel: any, channel: string)
         user = <User>JSON.parse(user);
         addUserToChannel(user);
         conversations[currentChannelName].add(new GUIChatFeedElement(feedList, (<User>user).login, strip("joined the channel")));   
-      
 });
 
 connection.on(USER_CONNECTION_TIMEOUT, (login: string, message: string, channel: string) => {
@@ -43,7 +42,7 @@ connection.on(PRIVATE_MESSAGE_RECEIVED, (hash:string, login: string, message: st
         console.log("private message received " + hash + " " + login + " " + message);       
         conversations[hash].add(new GUIChatFeedElement($(hash), login, message));
         if (activeConversation != hash) {
-            tabs[hash].addClass("pulse animate glow-unread");
+            tabs[hash].addClass("glow-unread");
         }
     } 
 });

@@ -25,13 +25,12 @@
     },
     {
       "provider": "cdnjs",
-      "library": "moment@2.9.0",
-      "destination": "wwwroot/lib/moment/"
-    },
-    {
-      "provider": "cdnjs",
       "library": "animate.css@3.7.0",
       "destination": "wwwroot/lib/animate.css/"
-    }    
+    },
+    {
+      "library": "croppie@2.5.0",
+      "destination": "wwwroot/lib/croppie/"
+    }
   ]
 }

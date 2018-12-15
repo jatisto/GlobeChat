@@ -19,9 +19,9 @@ class Conversation {
         }
         if (split == false) {
             var el = $(`<li class="list-group-item ${username == element.login ? "feed-user-message" : "feed-message"} ">
-                        <span class="badge badge-secondary user-login-badge">${element.login}
-                        </span> <span class="badge message-time"> @ ${new Date().toLocaleString().split(',')[1]}
-                        </span> <span class = "message-text">${element.message} </span>
+                        <span class="badge badge-secondary user-login-badge">${element.login}</span>
+                        <span class="badge message-time"> @ ${new Date().toLocaleString().split(',')[1]}</span>
+                        <span class = "message-text"> <img src="${localStorage.getItem(element.login)}" class="feed-avatar" /> ${element.message} </span>
                         </li>`);
             this.selector.append(el);
             this.feed.push(element);

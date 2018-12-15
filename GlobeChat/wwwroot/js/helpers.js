@@ -24,6 +24,24 @@ function ajaxRequestParams(_type, _url, _params, _callback) {
         });
     });
 }
+function ajaxRequestParamsJSON(_type, _url, _params, _callback) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return new Promise((resolve, reject) => {
+            var request = $.ajax({
+                contentType: "application/json",
+                type: _type,
+                url: _url,
+                data: _params,
+            });
+            request.done(function (res) {
+                resolve(res);
+            });
+            request.fail(function (jqXHR, textStatus) {
+                reject(jqXHR);
+            });
+        });
+    });
+}
 function loadPartial(partial) {
     overlay.show();
     partial.addClass("fadeInDown animated").show();
@@ -61,13 +79,21 @@ function loadChannels() {
 function loadUsers(channelName) {
     users = [];
     var resp = ajaxRequestParams("POST", "api/Channels/" + channelName + "/users", "", null);
-    resp.then(function (response) {
-        userList.html('');
-        let _users = response;
-        _users.sort(function (x, y) {
-            return x.login == username ? -1 : y.login == username ? 1 : 0;
+    var resp_avatars = ajaxRequestParams("POST", "api/Channels/" + channelName + "/users/avatars", "", null);
+    resp_avatars.then(function (response) {
+        let _avatars = response;
+        _avatars.forEach((avatar) => {
+            localStorage.setItem(avatar.login, avatar.image);
         });
-        _users.forEach((user) => addUserToChannel(user));
+    }).then(() => {
+        resp.then(function (response) {
+            userList.html('');
+            let _users = response;
+            _users.sort(function (x, y) {
+                return x.login == username ? -1 : y.login == username ? 1 : 0;
+            });
+            _users.forEach((user) => addUserToChannel(user));
+        });
     });
 }
 function addUserToChannel(user) {
@@ -135,9 +161,11 @@ function addConversation(login, hash) {
             if (tabs[hash].hasClass("glow-unread"))
                 tabs[hash].removeClass("glow-unread");
             backButton.selector.show();
+            avatarTop.html(`<img src="${localStorage.getItem(login)}" class="feed-top-avatar rounded-circle"/>`);
             activeConversation = hash;
             pvt = true;
             feedTop.text("Conversation with " + login);
+            tab.selector.addClass("active-conversation");
         }
         console.log("conversation " + hash + " tab clicked clicked");
     }, "glow-unread");

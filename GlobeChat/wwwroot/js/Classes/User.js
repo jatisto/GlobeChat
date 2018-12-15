@@ -17,4 +17,7 @@ class User {
         this.element.selector.hide();
         this.isVisible = false;
     }
+    updateAvatar() {
+        this.element.selector.find("img").css("background-color", "red");
+    }
 }
