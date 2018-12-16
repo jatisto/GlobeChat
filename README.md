@@ -1,6 +1,5 @@
-**What is GlobeChat?**
+**What is GlobeChat?** <br/>
 GlobeChat is a simple WebApplication written using ASP Net Core 2.1.<br/>
-See source code on GitHub
 
 **Default Accounts for testing purposes**
 
