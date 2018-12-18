@@ -1,14 +1,6 @@
 **What is GlobeChat?** <br/>
 GlobeChat is a simple WebApplication written using ASP Net Core 2.1.<br/>
 
-**Default Accounts for testing purposes**
-
-Login: Adam 
-Password : test
-
-Login: Lucy 
-Password : test
-
 **Technologies included:** <br/>
 
 -Written in C# <br/>
